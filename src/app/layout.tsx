@@ -11,7 +11,7 @@ import ThemeManager from "./components/ThemeManager";
 export const metadata: Metadata = {
   title: "Accord",
   description:
-    "A chatting software developed for self-practice, as an attempt to clone the flair of discord",
+    "A chatting software developed for self-practice in the style of discord",
   authors: {
     name: "infiniteplay",
   },
