@@ -690,7 +690,7 @@ export default function ChatSearchUI({
         positions={["bottom"]}
         align="center"
         containerStyle={{
-          zIndex: 80,
+          zIndex: "80",
         }}
         content={
           <SearchMenu
@@ -734,7 +734,7 @@ export default function ChatSearchUI({
                 renderElement={renderElement}
                 renderLeaf={renderLeaf}
                 className="focus:outline-none caret-lime-300 rounded-md max-w-[100%] overflow-x-scroll whitespace-nowrap p-2 focus:bg-lime-600 transition text-lime-300"
-                onKeyDown={(e: KeyboardEvent) => {
+                onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
                     handleSearchChatMessage(0, "NEW", false);

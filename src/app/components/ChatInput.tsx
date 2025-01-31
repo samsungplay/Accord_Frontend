@@ -1657,7 +1657,7 @@ export default function ChatInput({
         {showMoreButton && (
           <Popover
             containerStyle={{
-              zIndex: 50,
+              zIndex: "50",
             }}
             isOpen={chatMenuOpen}
             content={
@@ -1679,7 +1679,7 @@ export default function ChatInput({
 
         <Popover
           containerStyle={{
-            zIndex: emojiZIndex ?? 0,
+            zIndex: emojiZIndex?.toString() ?? "0",
           }}
           align="start"
           isOpen={openSearchView.length > 0}
@@ -1722,7 +1722,7 @@ export default function ChatInput({
                 renderLeaf={renderLeaf}
                 renderElement={renderElement}
                 className={`focus:outline-none`}
-                onPaste={(e: ClipboardEvent) => {
+                onPaste={(e) => {
                   if (e.clipboardData && handleOnFileUpload) {
                     handleOnFileUpload(e.clipboardData.files);
                   }
@@ -1739,7 +1739,7 @@ export default function ChatInput({
                     setBoundText(text);
                   }
                 }}
-                onKeyDown={(e: KeyboardEvent) => {
+                onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey && handleSendMessage) {
                     e.preventDefault();
 
@@ -1796,7 +1796,7 @@ export default function ChatInput({
 
         <Popover
           containerStyle={{
-            zIndex: emojiZIndex ?? 50,
+            zIndex: emojiZIndex?.toString() ?? "50",
           }}
           onClickOutside={() => setEmojiMenuOpen(false)}
           reposition={true}
@@ -1829,7 +1829,7 @@ export default function ChatInput({
         {showGifMenu ? (
           <Popover
             containerStyle={{
-              zIndex: 50,
+              zIndex: "50",
             }}
             onClickOutside={() => setTenorMenuOpen(false)}
             reposition={true}

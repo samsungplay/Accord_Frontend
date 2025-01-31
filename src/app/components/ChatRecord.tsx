@@ -1320,7 +1320,7 @@ const ChatRecord = React.memo(
           decorationCache.current.has(entry[1].join("@")) &&
           useCache.current
         ) {
-          return decorationCache.current.get(entry[1].join("@"));
+          return decorationCache.current.get(entry[1].join("@"))!;
         }
 
         if ((entry[0] as unknown as Editor)["operations"]) {
@@ -4483,7 +4483,7 @@ const ChatRecord = React.memo(
                   {!editMode && !isSimplePreview && currentChatRoom.id > 0 && (
                     <Popover
                       containerStyle={{
-                        zIndex: 75,
+                        zIndex: "75",
                       }}
                       positions={["left", "bottom"]}
                       parentElement={chatViewRef}
@@ -4732,7 +4732,7 @@ const ChatRecord = React.memo(
                           <div className="text-lime-700 flex w-full items-center gap-2">
                             <Popover
                               containerStyle={{
-                                zIndex: 50,
+                                zIndex: "50",
                               }}
                               isOpen={openReplyUserCard}
                               reposition={true}
@@ -4794,7 +4794,7 @@ const ChatRecord = React.memo(
                           positions={["top", "bottom"]}
                           reposition={true}
                           containerStyle={{
-                            zIndex: 50,
+                            zIndex: "50",
                           }}
                           content={
                             <div className="animate-popOut mb-[1rem] ml-[1rem]">

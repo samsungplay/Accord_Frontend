@@ -287,7 +287,7 @@ export default function UserDetailsCard({
                     {friends.data?.data.find((e) => e.id === user.id) && (
                       <Popover
                         containerStyle={{
-                          zIndex: 105,
+                          zIndex: "105",
                         }}
                         positions={["right", "bottom", "left", "top"]}
                         isOpen={hoveringInviteToServer}

@@ -462,7 +462,7 @@ export default function AudioPreview({
           left: mouseXDeferred,
         }}
         containerStyle={{
-          zIndex: 30,
+          zIndex: "30",
         }}
       >
         <div className="w-full">
@@ -527,7 +527,7 @@ export default function AudioPreview({
           </div>
         }
         containerStyle={{
-          zIndex: 30,
+          zIndex: "30",
         }}
       >
         <div

@@ -47,7 +47,7 @@ export default function ProfileBar({
         <div className="flex">
           <Popover
             containerStyle={{
-              zIndex: 50,
+              zIndex: "50",
             }}
             isOpen={openUsercard}
             reposition={true}

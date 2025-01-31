@@ -73,7 +73,7 @@ export default function FloatingButton({
           {description && !disabled && direction === "up" && (
             <Popover
               containerStyle={{
-                zIndex: 105,
+                zIndex: "105",
               }}
               reposition={false}
               isOpen={showDescription}
@@ -106,7 +106,7 @@ export default function FloatingButton({
           {description && !disabled && direction === "down" && (
             <Popover
               containerStyle={{
-                zIndex: 105,
+                zIndex: "105",
               }}
               reposition={false}
               isOpen={showDescription}

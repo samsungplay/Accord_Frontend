@@ -49,9 +49,9 @@ export default function PollAnswerInput({
 
       <Popover
         isOpen={open}
-        position={["top", "right"]}
+        positions={["top", "right"]}
         containerStyle={{
-          zIndex: 91,
+          zIndex: "91",
         }}
         onClickOutside={() => setOpen(false)}
         content={

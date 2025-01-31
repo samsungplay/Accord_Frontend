@@ -80,7 +80,7 @@ export default function DraggableProgressbar({
       >
         <Popover
           containerStyle={{
-            zIndex: 85,
+            zIndex: "85",
           }}
           positions={["top"]}
           content={

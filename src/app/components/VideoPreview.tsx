@@ -439,7 +439,7 @@ export default function VideoPreview({
             left: mouseXDeferred,
           }}
           containerStyle={{
-            zIndex: 30,
+            zIndex: "30",
           }}
         >
           <div className="w-full">
@@ -504,7 +504,7 @@ export default function VideoPreview({
             </div>
           }
           containerStyle={{
-            zIndex: 50,
+            zIndex: "50",
           }}
         >
           <div

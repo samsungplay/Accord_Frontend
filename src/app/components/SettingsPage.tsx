@@ -2663,7 +2663,7 @@ export default function SettingsPage({
                       <p className="mt-2 animate-fadeIn">Choose a sound</p>
                       <Popover
                         containerStyle={{
-                          zIndex: 70,
+                          zIndex: "70",
                         }}
                         isOpen={soundPickerOpen}
                         positions={["bottom", "top", "left", "right"]}

@@ -26,7 +26,7 @@ export default function ConversationSearchUIUserEntry({
   return (
     <Popover
       containerStyle={{
-        zIndex: 105,
+        zIndex: "105",
       }}
       isOpen={openUsercard}
       reposition={true}

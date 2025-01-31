@@ -76,7 +76,7 @@ export default function Userbar({ user }: UserbarType) {
     >
       <Popover
         containerStyle={{
-          zIndex: 40,
+          zIndex: "40",
         }}
         onClickOutside={(e: MouseEvent) => {
           const candidate1 = (e.target as HTMLElement).parentNode?.parentNode

@@ -1149,7 +1149,7 @@ export default function SoundPicker({
           }
           isOpen={emojiOpen}
           containerStyle={{
-            zIndex: 50,
+            zIndex: "50",
           }}
           positions={["bottom", "top", "right", "left"]}
           onClickOutside={() => setEmojiOpen(false)}

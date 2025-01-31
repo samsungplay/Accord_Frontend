@@ -4074,12 +4074,12 @@ export default function ChatroomPage() {
                         <div>
                           <Popover
                             containerStyle={{
-                              zIndex: 75,
+                              zIndex: "75",
                             }}
                             isOpen={showInviteFriendsInterface}
                             positions={["bottom", "left", "right", "top"]}
                             content={
-                              chatRoom.data?.data && (
+                              chatRoom.data?.data ? (
                                 <SelectFriendsInterface
                                   setShowInterface={
                                     setShowInviteFriendsInterface
@@ -4097,6 +4097,8 @@ export default function ChatroomPage() {
                                     shouldShowManageMembers
                                   }
                                 />
+                              ) : (
+                                <></>
                               )
                             }
                           >
@@ -4140,7 +4142,7 @@ export default function ChatroomPage() {
                             />
                           }
                           containerStyle={{
-                            zIndex: 5,
+                            zIndex: "5",
                           }}
                         >
                           <div className="mr-1 sm:mr-2">
@@ -4172,7 +4174,7 @@ export default function ChatroomPage() {
                                 />
                               }
                               containerStyle={{
-                                zIndex: 5,
+                                zIndex: "5",
                               }}
                             >
                               <div className="mr-1 sm:mr-2">
@@ -4371,7 +4373,7 @@ export default function ChatroomPage() {
                     />
                     <Popover
                       containerStyle={{
-                        zIndex: 50,
+                        zIndex: "50",
                       }}
                       isOpen={openDMStartUsercard}
                       reposition={true}
@@ -4652,12 +4654,12 @@ export default function ChatroomPage() {
                 <div>
                   <Popover
                     containerStyle={{
-                      zIndex: 75,
+                      zIndex: "75",
                     }}
                     isOpen={showInviteFriendsInterfaceSmallScreen}
                     positions={["bottom", "left", "right", "top"]}
                     content={
-                      chatRoom.data?.data && (
+                      chatRoom.data?.data ? (
                         <div className="z-[100]">
                           <SelectFriendsInterface
                             setShowInterface={
@@ -4673,6 +4675,8 @@ export default function ChatroomPage() {
                             shouldShowManageMembers={shouldShowManageMembers}
                           />
                         </div>
+                      ) : (
+                        <></>
                       )
                     }
                   >

@@ -50,7 +50,7 @@ export default function MentionBlock({
       reposition={true}
       positions={["top", "bottom"]}
       containerStyle={{
-        zIndex: 25,
+        zIndex: "25",
       }}
       content={
         <div className="animate-popOut mb-[1rem] ml-[1rem]">

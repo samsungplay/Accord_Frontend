@@ -1263,7 +1263,7 @@ export default function CallOverlay({
     <Popover
       isOpen={true}
       containerStyle={{
-        zIndex: 30,
+        zIndex: "30",
       }}
       align="end"
       content={
@@ -1419,7 +1419,7 @@ export default function CallOverlay({
                 }
                 isOpen={videoMenuOpen}
                 containerStyle={{
-                  zIndex: 10,
+                  zIndex: "10",
                 }}
                 onClickOutside={() => {
                   setVideoMenuOpen(false);
@@ -1534,7 +1534,7 @@ export default function CallOverlay({
                 }
                 isOpen={voiceMenuOpen}
                 containerStyle={{
-                  zIndex: 10,
+                  zIndex: "10",
                 }}
                 onClickOutside={() => {
                   setVoiceMenuOpen(false);
@@ -1655,7 +1655,7 @@ export default function CallOverlay({
                 }
                 isOpen={emojiOpen}
                 containerStyle={{
-                  zIndex: 40,
+                  zIndex: "40",
                 }}
                 onClickOutside={() => {
                   setEmojiOpen(false);

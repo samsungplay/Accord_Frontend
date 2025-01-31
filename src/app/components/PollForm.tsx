@@ -302,7 +302,7 @@ export default function PollForm({ currentChatRoom }: PollFormType) {
           }}
         >
           <Editable
-            onKeyDown={(e: KeyboardEvent) => {
+            onKeyDown={(e) => {
               const len = Editor.string(editor, []).length;
               if (len >= 300 && e.key !== "Backspace") {
                 e.preventDefault();

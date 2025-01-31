@@ -5741,7 +5741,7 @@ export default function DashboardLayout({
 
                               <Popover
                                 containerStyle={{
-                                  zIndex: 75,
+                                  zIndex: "75",
                                 }}
                                 isOpen={showSelectFriendsInterface}
                                 positions={["bottom", "left", "top", "right"]}

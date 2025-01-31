@@ -976,7 +976,7 @@ export default function Usercard({
         {shouldShowStatusController && (
           <Popover
             containerStyle={{
-              zIndex: 90,
+              zIndex: "90",
             }}
             isOpen={statusBarHovering}
             content={

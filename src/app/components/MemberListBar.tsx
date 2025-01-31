@@ -66,7 +66,7 @@ export default function MemberListBar({
                 positions={["left", "bottom"]}
                 reposition={true}
                 containerStyle={{
-                  zIndex: 50,
+                  zIndex: "50",
                 }}
                 content={
                   <div className="animate-popOut mb-[1rem] ml-[1rem]">
