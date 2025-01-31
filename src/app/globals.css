@@ -1,0 +1,134 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  height: 100vh;
+  height: 100dvh;
+  @apply bg-gradient-to-r from-lime-500 to-lime-600;
+}
+
+body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  @apply bg-gradient-to-r from-lime-500 to-lime-600 dark:from-lime-400 dark:to-lime-300;
+
+  z-index: -1;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+em-emoji-picker {
+  --border-radius: 24px;
+  --category-icon-size: 24px;
+  --color-border-over: rgba(0, 0, 0, 0.1);
+  --color-border: rgba(0, 0, 0, 0.05);
+  --font-size: 16px;
+  --rgb-accent: 101, 163, 13;
+  --rgb-background: 132, 204, 22;
+  --rgb-color: 255, 255, 255;
+  --rgb-input: 101, 163, 13;
+  max-height: 50vh;
+  max-width: 70vw;
+  @apply bg-lime-500 animate-fadeInUpFaster
+  /* height: 50vh;
+  min-height: 400px;
+  max-height: 800px; */;
+}
+
+.dark em-emoji-picker {
+  --border-radius: 24px;
+  --category-icon-size: 24px;
+  --color-border-over: rgba(255, 255, 255, 0.1);
+  --color-border: rgba(255, 255, 255, 0.05);
+  --font-size: 16px;
+  --rgb-accent: 190, 242, 100;
+  --rgb-background: 163, 230, 53;
+  --rgb-color: 77, 124, 15;
+  --rgb-input: 190, 242, 100;
+  max-height: 50vh;
+  max-width: 70vw;
+  @apply animate-fadeInUpFaster;
+}
+
+progress::-moz-progress-bar {
+  background: rgb(132, 204, 22);
+}
+
+.dark progress::-moz-progress-bar {
+  background: rgb(163, 230, 53);
+}
+
+progress::-webkit-progress-value {
+  background: rgb(132, 204, 22);
+}
+
+.dark progress::-webkit-progress-value {
+  background: rgb(163, 230, 53);
+}
+
+progress {
+  color: rgb(132, 204, 22);
+}
+
+.dark progress {
+  color: rgb(163, 230, 53);
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  /* Internet Explorer 10+ */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+  /* Safari and Chrome */
+}
+
+.scrollbar-always-visible {
+  overflow-y: scroll; /* Ensures the vertical scrollbar is always visible */
+  overflow-x: auto; /* Optional: horizontal scrollbar only if needed */
+  scrollbar-width: auto; /* Ensures scrollbar width is visible in Firefox */
+  -ms-overflow-style: auto; /* Ensures scrollbar visibility in IE */
+}
+
+/* Calendar Styling */
+.react-calendar__month-view__weekdays {
+  @apply font-bold my-1
+   text-lime-700;
+}
+
+.react-calendar__month-view__days__day--weekend {
+  @apply text-lime-300;
+}
+
+.react-calendar__tile--now {
+  @apply bg-lime-700 border-[1px] border-lime-300;
+}
+
+.react-calendar__navigation button {
+  @apply bg-transparent transition border-[1px] border-transparent hover:bg-lime-700 hover:border-lime-300 rounded-md mx-1 px-2
+  text-lime-300 font-bold text-lg;
+}
+
+.react-calendar__tile:disabled {
+  @apply text-lime-800 cursor-not-allowed hover:border-transparent hover:bg-transparent;
+}
+
+.react-calendar__navigation button:disabled {
+  @apply cursor-default hover:border-transparent hover:bg-transparent;
+}
