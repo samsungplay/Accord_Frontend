@@ -22,7 +22,7 @@ const Constants = {
     "Function components cannot be given refs.",
   ],
   SERVER_URL_PATH: SERVER_URL_PATH,
-  CLIENT_URL_PATH: "http://localhost:3000",
+  CLIENT_URL_PATH: "http://accordapp.online",
   CLIENT_PER_PAGE_COUNT: 20,
   CLIENT_MAX_PAGES: 7,
 
