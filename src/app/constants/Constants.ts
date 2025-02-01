@@ -13,7 +13,7 @@ const urlRegex =
   "https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)";
 
 // const SERVER_URL_PATH = "http://192.168.0.41:8080";
-const SERVER_URL_PATH = "http://localhost:8080";
+const SERVER_URL_PATH = "https://api.accordapp.online";
 const Constants = {
   SERVER_STATIC_CONTENT_PATH: `${SERVER_URL_PATH}/content/`,
   SERVER_ATTACHMENT_CONTENT_PATH: `${SERVER_URL_PATH}/download/attachments/`,
