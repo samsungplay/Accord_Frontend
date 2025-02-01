@@ -13,7 +13,7 @@ const urlRegex =
   "https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)";
 
 const SERVER_URL_PATH =
-  process.env["ACCORD_ENV"] !== "dev"
+  process.env.NODE_ENV !== "development"
     ? "https://api.accordapp.online"
     : "http://localhost:8080";
 const Constants = {
@@ -25,7 +25,7 @@ const Constants = {
   ],
   SERVER_URL_PATH: SERVER_URL_PATH,
   CLIENT_URL_PATH:
-    process.env["ACCORD_ENV"] !== "dev"
+    process.env.NODE_ENV !== "development"
       ? "https://accordapp.online"
       : "http://localhost:3000",
   CLIENT_PER_PAGE_COUNT: 20,
