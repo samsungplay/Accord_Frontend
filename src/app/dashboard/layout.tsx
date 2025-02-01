@@ -3815,9 +3815,25 @@ export default function DashboardLayout({
 
     window.addEventListener("beforeunload", onBeforeUnload);
 
+    let currentUser = queryClient.getQueryData<{ data: User }>(["user"])?.data;
     const initializeSocketClient = async () => {
+      //wait for currentUser query to complete
+      await new Promise((resolve) => {
+        if (currentUser) {
+          resolve(true);
+        }
+        const interval = setInterval(() => {
+          currentUser = queryClient.getQueryData<{ data: User }>([
+            "user",
+          ])?.data;
+          if (currentUser) {
+            resolve(true);
+            clearInterval(interval);
+          }
+        }, 100);
+      });
       try {
-        const [stompClient_, frame_] = await socketapi.connect();
+        const [stompClient_, frame_] = await socketapi.connect(currentUser!.id);
 
         if (stompClient_ && frame_) {
           setStompClient(stompClient_);
