@@ -13,7 +13,7 @@ const urlRegex =
   "https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)";
 
 const SERVER_URL_PATH =
-  process.env["ACCORD_ENV"] === "prod"
+  process.env["ACCORD_ENV"] !== "dev"
     ? "https://api.accordapp.online"
     : "http://localhost:8080";
 const Constants = {
@@ -25,7 +25,7 @@ const Constants = {
   ],
   SERVER_URL_PATH: SERVER_URL_PATH,
   CLIENT_URL_PATH:
-    process.env["ACCORD_ENV"] === "prod"
+    process.env["ACCORD_ENV"] !== "dev"
       ? "https://accordapp.online"
       : "http://localhost:3000",
   CLIENT_PER_PAGE_COUNT: 20,
@@ -145,5 +145,4 @@ const Constants = {
 
 Constants.SERVER_STATIC_CONTENT_PATH = `${Constants.SERVER_URL_PATH}/content/`;
 
-console.log("Environment set:", process.env["ACCORD_ENV"]);
 export default Constants;
