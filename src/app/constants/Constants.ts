@@ -145,4 +145,5 @@ const Constants = {
 
 Constants.SERVER_STATIC_CONTENT_PATH = `${Constants.SERVER_URL_PATH}/content/`;
 
+console.log("Environment set:", process.env["ACCORD_ENV"]);
 export default Constants;
