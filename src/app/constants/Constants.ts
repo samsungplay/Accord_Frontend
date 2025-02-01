@@ -13,7 +13,9 @@ const urlRegex =
   "https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)";
 
 const SERVER_URL_PATH =
-  process.env["ACCORD_API_URL"] || "http://localhost:8080";
+  process.env["ACCORD_ENV"] === "prod"
+    ? "https://api.accordapp.online"
+    : "http://localhost:8080";
 const Constants = {
   SERVER_STATIC_CONTENT_PATH: `${SERVER_URL_PATH}/content/`,
   SERVER_ATTACHMENT_CONTENT_PATH: `${SERVER_URL_PATH}/download/attachments/`,
@@ -22,7 +24,10 @@ const Constants = {
     "Function components cannot be given refs.",
   ],
   SERVER_URL_PATH: SERVER_URL_PATH,
-  CLIENT_URL_PATH: process.env["ACCORD_CLIENT_URL"] || "http://localhost:3000",
+  CLIENT_URL_PATH:
+    process.env["ACCORD_ENV"] === "prod"
+      ? "https://accordapp.online"
+      : "http://localhost:3000",
   CLIENT_PER_PAGE_COUNT: 20,
   CLIENT_MAX_PAGES: 7,
 
