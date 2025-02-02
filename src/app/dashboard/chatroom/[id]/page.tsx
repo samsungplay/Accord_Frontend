@@ -3378,6 +3378,27 @@ export default function ChatroomPage() {
 
   const handleStartCall = useCallback(
     async (withVideo?: boolean) => {
+      //can't start call in  a solo chatroom
+      if (currentChatRoom && currentChatRoom.participants.length <= 1) {
+        ModalUtils.openGenericModal(
+          modalContext,
+          "Uh oh.",
+          "You cannot start a call in a chatroom with only 1 user!",
+          () => {},
+          undefined,
+          [
+            <PrimaryButton key={0}>
+              <div className="text-center flex items-center gap-2 cursor-pointer w-full justify-center transition text-white">
+                Take me back.
+                <IoReturnUpForward />
+              </div>
+            </PrimaryButton>,
+          ],
+          undefined,
+          false
+        );
+        return;
+      }
       //only if there is no ongoing call, you can start the call
       if (!isCallOngoing) {
         setCallOverlayOpenMode("startCall" + (withVideo ? "withVideo" : ""));
