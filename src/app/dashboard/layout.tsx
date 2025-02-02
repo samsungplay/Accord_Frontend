@@ -3833,6 +3833,7 @@ export default function DashboardLayout({
         }, 100);
       });
       try {
+        console.log("Logging in with user id", currentUser!.id);
         const [stompClient_, frame_] = await socketapi.connect(currentUser!.id);
 
         if (stompClient_ && frame_) {
