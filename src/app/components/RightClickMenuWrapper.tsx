@@ -1,10 +1,10 @@
-import React, { MouseEvent, useCallback, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { useOnClickOutside } from "usehooks-ts";
 export default function RightClickMenuWrapper({
   children,
   menu,
   disabled,
-  supportLeftClick = true,
+  supportLeftClick = false,
   additionalOnClick,
 }: {
   children: React.ReactNode;
@@ -17,12 +17,11 @@ export default function RightClickMenuWrapper({
   const [menuX, setMenuX] = useState(0);
   const [menuY, setMenuY] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
-  const handleShowMenu = useCallback((e: MouseEvent) => {
-    e.preventDefault();
+  const handleShowMenu = useCallback((x: number, y: number) => {
     setShowMenu((prev) => !prev);
 
-    setMenuX(e.nativeEvent.offsetX);
-    setMenuY(e.nativeEvent.offsetY);
+    setMenuX(x);
+    setMenuY(y);
   }, []);
 
   useOnClickOutside(ref, (e) => {
@@ -41,14 +40,36 @@ export default function RightClickMenuWrapper({
     setTimeout(() => setShowMenu(false), 100);
   });
 
+  const longPressTimer = useRef<NodeJS.Timeout | null>(null);
+
   return (
     <div
       ref={ref}
       className="cursor-pointer relative"
-      onContextMenu={(e) => handleShowMenu(e)}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        handleShowMenu(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+      }}
+      onTouchStart={(e) => {
+        if (e.target instanceof HTMLElement) {
+          const rect = e.target.getBoundingClientRect();
+          const x = e.targetTouches[0].pageX - rect.left;
+          const y = e.targetTouches[0].pageY - rect.top;
+          longPressTimer.current = setTimeout(() => {
+            handleShowMenu(x, y);
+          }, 1000);
+        }
+      }}
+      onTouchCancel={() => {
+        if (longPressTimer.current) clearTimeout(longPressTimer.current);
+      }}
+      onTouchEnd={() => {
+        if (longPressTimer.current) clearTimeout(longPressTimer.current);
+      }}
       onClick={(e) => {
+        e.preventDefault();
         if (supportLeftClick) {
-          handleShowMenu(e);
+          handleShowMenu(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
         }
         if (additionalOnClick) {
           additionalOnClick();
