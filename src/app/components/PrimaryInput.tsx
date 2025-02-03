@@ -148,7 +148,7 @@ export default function PrimaryInput({
           type={type}
           className={`${
             readonly && "cursor-not-allowed"
-          } peer ${customStylesInput} placeholder:text-lime-300 hover:bg-opacity-70 focus:bg-opacity-70 transition duration-500 focus:shadow-md mt-1 rounded-md h-[2rem] focus:outline-none bg-lime-600 p-2 caret-lime-300
+          } peer ${customStylesInput} placeholder:text-lime-300 placeholder:text-opacity-50 hover:bg-opacity-70 focus:bg-opacity-70 transition duration-500 focus:shadow-md mt-1 rounded-md h-[2rem] focus:outline-none bg-lime-600 p-2 caret-lime-300
             text-lime-300 ${
               isError ? "animate-jiggle" : customInputAnimation
             } ${
@@ -170,7 +170,7 @@ export default function PrimaryInput({
           type={type}
           className={`${
             readonly && "cursor-not-allowed"
-          } peer ${customStylesInput} placeholder:text-lime-300 hover:bg-opacity-70 focus:bg-opacity-70 transition duration-500 focus:shadow-md mt-1 rounded-md h-[2rem] focus:outline-none bg-lime-600 p-2 caret-lime-300
+          } peer ${customStylesInput} placeholder:text-lime-300 placeholder:text-opacity-50 hover:bg-opacity-70 focus:bg-opacity-70 transition duration-500 focus:shadow-md mt-1 rounded-md h-[2rem] focus:outline-none bg-lime-600 p-2 caret-lime-300
             text-lime-300 ${
               isError ? "animate-jiggle" : customInputAnimation
             } ${

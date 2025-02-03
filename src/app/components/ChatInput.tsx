@@ -1392,11 +1392,11 @@ export default function ChatInput({
   const renderPlaceholder = useCallback(
     ({ children, attributes }: RenderPlaceholderProps) => {
       return (
-        <div {...attributes}>
+        <span {...attributes}>
           <p className="whitespace-nowrap overflow-hidden text-ellipsis">
             {children}
           </p>
-        </div>
+        </span>
       );
     },
     []
@@ -1780,9 +1780,13 @@ export default function ChatInput({
                   }
                 }}
                 renderPlaceholder={
-                  customPlaceholderText ? renderPlaceholder : undefined
+                  customPlaceholderText && editorText.length === 0
+                    ? renderPlaceholder
+                    : undefined
                 }
-                placeholder={customPlaceholderText}
+                placeholder={
+                  editorText.length === 0 ? customPlaceholderText : undefined
+                }
               />
             </Slate>
           </div>

@@ -1151,11 +1151,11 @@ export default function SelectFriendsInterface({
                   <PrimaryInput
                     errorMessage={chatRoomNameError}
                     value_={chatRoomName}
-                    label={"Chatroom Name (optional for DM)"}
+                    label={"Chatroom Name"}
                     onChange={(e) => setChatRoomName(e.target.value)}
                     id={"chatRoomName"}
                     type={"text"}
-                    placeholder=""
+                    placeholder="Optional for DM"
                     customStylesInput="w-full my-2"
                   />
                 </div>
