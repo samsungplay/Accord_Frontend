@@ -1591,6 +1591,7 @@ export default function ChatInput({
   const [typing, setTyping] = useState(false);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const typingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [composingText, setComposingText] = useState("");
 
   const handleSendTypeEvent = useCallback(async () => {
     if (currentChatRoom) {
@@ -1703,6 +1704,15 @@ export default function ChatInput({
               initialValue={initialValue}
             >
               <Editable
+                onCompositionStart={(e) => {
+                  setComposingText(e.data);
+                }}
+                onCompositionUpdate={(e) => {
+                  setComposingText(e.data);
+                }}
+                onCompositionEnd={() => {
+                  setComposingText("");
+                }}
                 tabIndex={disabled ? -1 : 0}
                 decorate={decorate}
                 renderLeaf={renderLeaf}
@@ -1772,7 +1782,8 @@ export default function ChatInput({
                   width: emojiSearchViewWidth * 0.5,
                 }}
                 className={` ${
-                  editorText.length > 0 && "hidden"
+                  (editorText.length > 0 || composingText.length > 0) &&
+                  "hidden"
                 } absolute whitespace-nowrap overflow-ellipsis overflow-hidden top-[25%] h-fit opacity-50 pointer-events-none`}
               >
                 {customPlaceholderText}

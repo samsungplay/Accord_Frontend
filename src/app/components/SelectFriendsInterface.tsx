@@ -1256,7 +1256,7 @@ export default function SelectFriendsInterface({
                 </>
               )}
 
-            <div className="flex flex-row md:flex-col">
+            <div className="flex flex-row gap-1 md:flex-col md:gap-0">
               <PrimaryButton
                 onclick={() => {
                   if (currentChatRoom) {
