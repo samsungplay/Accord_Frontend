@@ -14,6 +14,7 @@ import {
   ReactEditor,
   withReact,
   RenderLeafProps,
+  RenderPlaceholderProps,
   RenderElementProps,
 } from "slate-react";
 import EmojiSearchView from "./EmojiSearchView";
@@ -1388,6 +1389,20 @@ export default function ChatInput({
     ReactEditor.focus(editor);
   }, []);
 
+  const renderPlaceholder = useCallback(
+    ({ children, attributes }: RenderPlaceholderProps) => {
+      return (
+        <span
+          {...attributes}
+          className="whitespace-nowrap overflow-hidden text-ellipsis"
+        >
+          {children}
+        </span>
+      );
+    },
+    []
+  );
+
   const handleUpdateSearchViewQuery = useCallback(() => {
     const offset = editor.selection.anchor.offset;
     const textNode =
@@ -1591,7 +1606,6 @@ export default function ChatInput({
   const [typing, setTyping] = useState(false);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const typingIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  const [composingText, setComposingText] = useState("");
 
   const handleSendTypeEvent = useCallback(async () => {
     if (currentChatRoom) {
@@ -1698,37 +1712,12 @@ export default function ChatInput({
             className="bg-lime-600 float-left ml-4 text-lime-300 placeholder:text-lime-300 hover:bg-opacity-70 focus:bg-opacity-70 transition duration-500 focus:shadow-md
                                 focus:outline-none caret-lime-300 w-full self-center max-h-[20rem] overflow-scroll"
           >
-            <div
-              style={{
-                width: emojiSearchViewWidth * 0.5,
-              }}
-              className={` ${
-                (editorText.length > 0 || composingText.length > 0) && "hidden"
-              } absolute whitespace-nowrap overflow-ellipsis overflow-hidden top-[25%] h-fit opacity-50 pointer-events-none`}
-            >
-              {customPlaceholderText}
-            </div>
             <Slate
               editor={editor}
               onSelectionChange={handleUpdateSearchViewQuery}
               initialValue={initialValue}
             >
               <Editable
-                onCompositionStart={(e) => {
-                  setTimeout(() => {
-                    setComposingText(e.data);
-                  }, 100);
-                }}
-                onCompositionUpdate={(e) => {
-                  setTimeout(() => {
-                    setComposingText(e.data);
-                  }, 100);
-                }}
-                onCompositionEnd={() => {
-                  setTimeout(() => {
-                    setComposingText("");
-                  }, 100);
-                }}
                 tabIndex={disabled ? -1 : 0}
                 decorate={decorate}
                 renderLeaf={renderLeaf}
@@ -1766,7 +1755,7 @@ export default function ChatInput({
                       if (setBoundText) {
                         setBoundText(text);
                       }
-                    }, 1);
+                    }, 50);
                   } else {
                     if (typingTimeoutRef.current) {
                       clearTimeout(typingTimeoutRef.current);
@@ -1788,10 +1777,23 @@ export default function ChatInput({
                       if (setBoundText) {
                         setBoundText(text);
                       }
-                    }, 1);
+                    }, 50);
                   }
                 }}
+                // renderPlaceholder={
+                //   customPlaceholderText ? renderPlaceholder : undefined
+                // }
+                // placeholder={customPlaceholderText}
               />
+
+              <div
+                style={{
+                  width: emojiSearchViewWidth * 0.5,
+                }}
+                className={`absolute slate-placeholder whitespace-nowrap overflow-ellipsis overflow-hidden top-[25%] h-fit opacity-50 pointer-events-none`}
+              >
+                {customPlaceholderText}
+              </div>
             </Slate>
           </div>
         </Popover>
