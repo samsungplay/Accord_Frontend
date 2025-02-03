@@ -4643,6 +4643,13 @@ export default function ChatroomPage() {
                   showSendButton={showSendButton}
                   convertEmoticon={convertEmoticon}
                   previewSyntax={previewSyntax}
+                  customPlaceholderText={
+                    "Message " +
+                    GenericUtil.computeChatRoomName(
+                      currentChatRoom,
+                      currentUser
+                    )
+                  }
                 />
               </div>
             </div>

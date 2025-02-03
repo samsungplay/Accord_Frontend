@@ -12,7 +12,7 @@ import Constants from "./constants/Constants";
 export const metadata: Metadata = {
   title: "Accord",
   description:
-    "A chatting webapp developed for self-project in the style of discord. Built with Next.js React, Spring Boot, Janus and Coturn",
+    "A chatting webapp developed for self-project in the style of discord. Built with React(Next.js), Spring Boot, Janus and Coturn.",
   authors: {
     name: "infiniteplay",
   },
@@ -34,7 +34,7 @@ export default function RootLayout({
         <meta property="og:title" content="Accord" />
         <meta
           property="og:description"
-          content="A chatting webapp developed for self-project in the style of discord. Built with Next.js React, Spring Boot, Janus and Coturn"
+          content="A chatting webapp developed for self-project in the style of discord. Built with React(Next.js), Spring Boot, Janus and Coturn."
         />
         <meta
           property="og:image"
