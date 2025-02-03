@@ -1707,17 +1707,17 @@ export default function ChatInput({
                 onCompositionStart={(e) => {
                   setTimeout(() => {
                     setComposingText(e.data);
-                  }, 1);
+                  }, 100);
                 }}
                 onCompositionUpdate={(e) => {
                   setTimeout(() => {
                     setComposingText(e.data);
-                  }, 1);
+                  }, 100);
                 }}
                 onCompositionEnd={() => {
                   setTimeout(() => {
                     setComposingText("");
-                  }, 1);
+                  }, 100);
                 }}
                 tabIndex={disabled ? -1 : 0}
                 decorate={decorate}

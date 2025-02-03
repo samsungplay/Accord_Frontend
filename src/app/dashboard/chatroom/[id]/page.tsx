@@ -2404,7 +2404,8 @@ export default function ChatroomPage() {
     async (editor?: Editor, plainText?: string) => {
       await new Promise((resolve) => setTimeout(() => resolve(true), 50));
 
-      const text = editor ? getText(editor) : plainText ?? "";
+      let text = editor ? getText(editor) : plainText ?? "";
+      text = text.trim();
 
       if (text.length === 0 && !attachments?.length) {
         return;

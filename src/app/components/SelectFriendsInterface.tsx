@@ -220,14 +220,15 @@ export default function SelectFriendsInterface({
           return;
         }
         if (chatRoomName.length > 30) {
-          setChatRoomNameError("Name too long");
+          setChatRoomNameError("Too long");
           return;
         }
         if (chatRoomName.length < 2) {
-          setChatRoomNameError("Name too short");
+          setChatRoomNameError("Too short");
+          return;
         }
         if (selectedFriends.length < 1 && dm) {
-          setChatRoomNameError("No friend selected");
+          setChatRoomNameError("!");
           return;
         }
         if (!createDMRoomMutation.isPending) {
@@ -1157,6 +1158,7 @@ export default function SelectFriendsInterface({
                     type={"text"}
                     placeholder="Optional for DM"
                     customStylesInput="w-full my-2"
+                    customStyles="whitespace-nowrap"
                   />
                 </div>
               )}

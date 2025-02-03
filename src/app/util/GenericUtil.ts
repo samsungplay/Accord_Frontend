@@ -213,7 +213,7 @@ const parseMarkdownText = (editor: Editor) => {
     }
   });
 
-  return text.trim();
+  return text;
 };
 
 const monitorPreview = (
