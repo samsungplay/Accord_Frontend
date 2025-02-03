@@ -18,7 +18,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { FaGithub } from "react-icons/fa";
-import Link from "next/link";
+
 import LoadingScreen from "../components/LoadingScreen";
 import Constants from "../constants/Constants";
 import React from "react";
@@ -739,12 +739,12 @@ export default function AuthenticationPage() {
                 <p className="text-center mt-1">Or</p>
                 <PrimaryButton buttonType="button" customStyles="mt-2 bg-white">
                   <div className="flex justify-center gap-4">
-                    <Link
+                    <a
                       href={`${Constants.SERVER_URL_PATH}/oauth2/authorization/github`}
                       className="text-black"
                     >
                       Sign in with Github
-                    </Link>
+                    </a>
                     <div className="text-black">
                       {" "}
                       <FaGithub size={24} />{" "}
