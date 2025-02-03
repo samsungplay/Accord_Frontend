@@ -1780,20 +1780,17 @@ export default function ChatInput({
                     }, 50);
                   }
                 }}
-                // renderPlaceholder={
-                //   customPlaceholderText ? renderPlaceholder : undefined
-                // }
-                // placeholder={customPlaceholderText}
+                renderPlaceholder={
+                  GenericUtil.isTouchDevice() && customPlaceholderText
+                    ? renderPlaceholder
+                    : undefined
+                }
+                placeholder={
+                  GenericUtil.isTouchDevice()
+                    ? customPlaceholderText
+                    : undefined
+                }
               />
-
-              <div
-                style={{
-                  width: emojiSearchViewWidth * 0.5,
-                }}
-                className={`absolute slate-placeholder whitespace-nowrap overflow-ellipsis overflow-hidden top-[25%] h-fit opacity-50 pointer-events-none`}
-              >
-                {customPlaceholderText}
-              </div>
             </Slate>
           </div>
         </Popover>
