@@ -1394,6 +1394,7 @@ export default function ChatInput({
       return (
         <span
           {...attributes}
+          contentEditable={false}
           className="whitespace-nowrap overflow-hidden text-ellipsis"
         >
           {children}
@@ -1781,15 +1782,9 @@ export default function ChatInput({
                   }
                 }}
                 renderPlaceholder={
-                  !GenericUtil.isTouchDevice() && customPlaceholderText
-                    ? renderPlaceholder
-                    : undefined
+                  customPlaceholderText ? renderPlaceholder : undefined
                 }
-                placeholder={
-                  !GenericUtil.isTouchDevice()
-                    ? customPlaceholderText
-                    : undefined
-                }
+                placeholder={customPlaceholderText}
               />
             </Slate>
           </div>
