@@ -14,7 +14,6 @@ import {
   ReactEditor,
   withReact,
   RenderLeafProps,
-  RenderPlaceholderProps,
   RenderElementProps,
 } from "slate-react";
 import EmojiSearchView from "./EmojiSearchView";
@@ -1389,19 +1388,6 @@ export default function ChatInput({
     ReactEditor.focus(editor);
   }, []);
 
-  const renderPlaceholder = useCallback(
-    ({ children, attributes }: RenderPlaceholderProps) => {
-      return (
-        <span {...attributes}>
-          <p className="whitespace-nowrap overflow-hidden text-ellipsis">
-            {children}
-          </p>
-        </span>
-      );
-    },
-    []
-  );
-
   const handleUpdateSearchViewQuery = useCallback(() => {
     const offset = editor.selection.anchor.offset;
     const textNode =
@@ -1721,7 +1707,7 @@ export default function ChatInput({
                 decorate={decorate}
                 renderLeaf={renderLeaf}
                 renderElement={renderElement}
-                className={`focus:outline-none`}
+                className={`focus:outline-none relative`}
                 onPaste={(e) => {
                   if (e.clipboardData && handleOnFileUpload) {
                     handleOnFileUpload(e.clipboardData.files);
@@ -1754,7 +1740,7 @@ export default function ChatInput({
                       if (setBoundText) {
                         setBoundText(text);
                       }
-                    }, 50);
+                    }, 1);
                   } else {
                     if (typingTimeoutRef.current) {
                       clearTimeout(typingTimeoutRef.current);
@@ -1776,18 +1762,21 @@ export default function ChatInput({
                       if (setBoundText) {
                         setBoundText(text);
                       }
-                    }, 50);
+                    }, 1);
                   }
                 }}
-                renderPlaceholder={
-                  customPlaceholderText && editorText.length === 0
-                    ? renderPlaceholder
-                    : undefined
-                }
-                placeholder={
-                  editorText.length === 0 ? customPlaceholderText : undefined
-                }
               />
+
+              <div
+                style={{
+                  width: emojiSearchViewWidth * 0.5,
+                }}
+                className={` ${
+                  editorText.length > 0 && "hidden"
+                } absolute whitespace-nowrap overflow-ellipsis overflow-hidden top-[25%] h-fit opacity-50 pointer-events-none`}
+              >
+                {customPlaceholderText}
+              </div>
             </Slate>
           </div>
         </Popover>

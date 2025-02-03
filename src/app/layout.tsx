@@ -40,9 +40,9 @@ export default function RootLayout({
           property="og:image"
           content={Constants.SERVER_STATIC_CONTENT_PATH + "accord_logo.png"}
         />
-        <meta property="og:url" content={Constants.CLIENT_URL_PATH} />{" "}
-        <meta property="og:type" content="website" />{" "}
-        <meta property="og:site_name" content="Accord" /> ```
+        <meta property="og:url" content={Constants.CLIENT_URL_PATH} />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Accord" />
       </head>
       <ThemeManager />
 
