@@ -1704,21 +1704,21 @@ export default function ChatInput({
               initialValue={initialValue}
             >
               <Editable
-                onCompositionStart={(e) => {
-                  setTimeout(() => {
-                    setComposingText(e.data);
-                  }, 100);
-                }}
-                onCompositionUpdate={(e) => {
-                  setTimeout(() => {
-                    setComposingText(e.data);
-                  }, 100);
-                }}
-                onCompositionEnd={() => {
-                  setTimeout(() => {
-                    setComposingText("");
-                  }, 100);
-                }}
+                // onCompositionStart={(e) => {
+                //   setTimeout(() => {
+                //     setComposingText(e.data);
+                //   }, 100);
+                // }}
+                // onCompositionUpdate={(e) => {
+                //   setTimeout(() => {
+                //     setComposingText(e.data);
+                //   }, 100);
+                // }}
+                // onCompositionEnd={() => {
+                //   setTimeout(() => {
+                //     setComposingText("");
+                //   }, 100);
+                // }}
                 tabIndex={disabled ? -1 : 0}
                 decorate={decorate}
                 renderLeaf={renderLeaf}
