@@ -1258,47 +1258,47 @@ export default function ChatInput({
       );
     };
 
-    editor.deleteBackward = (element) => {
-      let deleted = false;
-      // console.log(editor.children,editor.selection.anchor,editor.selection.focus,editor.children[editor.selection.anchor.path[0]].type,
-      // editor.selection.anchor.offset
-      // )
-      const ind = editor.selection.anchor.path[0] - 1;
-      if (ind >= 0 && editor.selection.anchor.offset === 0) {
-        if (editor.children[ind].type === "codeblock") {
-          // console.log('code block deleted!')
-          deleted = true;
-          const text = (editor.children[ind].children[0] as CustomText).text;
-          deleteBackward(element);
-          Transforms.insertText(editor, "'''" + text + "''", {
-            at: [ind, 0],
-          });
-        }
-      }
-      if (
-        editor.children[editor.selection.anchor.path[0]].type ===
-          "blockquote" &&
-        editor.selection.anchor.offset <= 0
-      ) {
-        Transforms.setNodes(
-          editor,
-          {
-            type: "paragraph",
-          },
-          {
-            at: editor.selection,
-          }
-        );
+    // editor.deleteBackward = (element) => {
+    //   let deleted = false;
+    //   // console.log(editor.children,editor.selection.anchor,editor.selection.focus,editor.children[editor.selection.anchor.path[0]].type,
+    //   // editor.selection.anchor.offset
+    //   // )
+    //   const ind = editor.selection.anchor.path[0] - 1;
+    //   if (ind >= 0 && editor.selection.anchor.offset === 0) {
+    //     if (editor.children[ind].type === "codeblock") {
+    //       // console.log('code block deleted!')
+    //       deleted = true;
+    //       const text = (editor.children[ind].children[0] as CustomText).text;
+    //       deleteBackward(element);
+    //       Transforms.insertText(editor, "'''" + text + "''", {
+    //         at: [ind, 0],
+    //       });
+    //     }
+    //   }
+    //   if (
+    //     editor.children[editor.selection.anchor.path[0]].type ===
+    //       "blockquote" &&
+    //     editor.selection.anchor.offset <= 0
+    //   ) {
+    //     Transforms.setNodes(
+    //       editor,
+    //       {
+    //         type: "paragraph",
+    //       },
+    //       {
+    //         at: editor.selection,
+    //       }
+    //     );
 
-        Transforms.insertText(editor, ">", {
-          at: editor.selection,
-        });
+    //     Transforms.insertText(editor, ">", {
+    //       at: editor.selection,
+    //     });
 
-        return;
-      }
+    //     return;
+    //   }
 
-      if (!deleted) deleteBackward(element);
-    };
+    //   if (!deleted) deleteBackward(element);
+    // };
 
     editor.apply = (operation) => {
       // if(operation.type === 'remove_node') {
@@ -1758,27 +1758,32 @@ export default function ChatInput({
                       }
                     }, 50);
                   } else {
-                    // if (typingTimeoutRef.current) {
-                    //   clearTimeout(typingTimeoutRef.current);
-                    // }
-                    // setTyping(true);
-                    // typingTimeoutRef.current = setTimeout(
-                    //   () => setTyping(false),
-                    //   1000
-                    // );
-                    // setTimeout(() => {
-                    //   handleUpdateSearchViewQuery();
-                    //   const text = GenericUtil.parseMarkdownText(editor);
-                    //   setEditorText(text);
-                    //   if (setBoundText) {
-                    //     setBoundText(text);
-                    //   }
-                    // }, 50);
+                    if (typingTimeoutRef.current) {
+                      clearTimeout(typingTimeoutRef.current);
+                    }
+
+                    setTyping(true);
+
+                    typingTimeoutRef.current = setTimeout(
+                      () => setTyping(false),
+                      1000
+                    );
+
+                    setTimeout(() => {
+                      handleUpdateSearchViewQuery();
+
+                      const text = GenericUtil.parseMarkdownText(editor);
+                      setEditorText(text);
+
+                      if (setBoundText) {
+                        setBoundText(text);
+                      }
+                    }, 50);
                   }
                 }}
-                // renderPlaceholder={
-                //   customPlaceholderText ? renderPlaceholder : undefined
-                // }
+                renderPlaceholder={
+                  customPlaceholderText ? renderPlaceholder : undefined
+                }
                 placeholder={customPlaceholderText}
               />
             </Slate>
