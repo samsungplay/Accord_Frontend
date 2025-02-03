@@ -41,8 +41,6 @@ import { ChatRecordType } from "../types/ChatRecordType";
 import { createAvatar } from "@dicebear/core";
 import { icons } from "@dicebear/collection";
 
-import Cookies from "js-cookie";
-
 import ChatNotificationContext from "../contexts/ChatNotificationContext";
 import CallAlertOverlay from "../components/CallAlertOverlay";
 import SoundUtil from "../util/SoundUtil";
@@ -3644,11 +3642,7 @@ export default function DashboardLayout({
             "BC1vN8qtr0DZxNlpCt3aOOGh1ZrLCrv6ypXbyC1NkiTCYaMOpX3q5LdQ2e7krKzz2mRUvE5zPbKuTP3lE4pyeFg",
         });
 
-        if (
-          !Cookies.get("accord_refresh_token") ||
-          !subscription.getKey("p256dh") ||
-          !subscription.getKey("p256dh")
-        ) {
+        if (!subscription.getKey("p256dh") || !subscription.getKey("p256dh")) {
           ModalUtils.openGenericModal(
             {
               setGenericContent,
@@ -3675,7 +3669,6 @@ export default function DashboardLayout({
             subscription.getKey("p256dh")!
           ),
           auth: GenericUtil.arrayBufferToBase64(subscription.getKey("auth")!),
-          loginSessionToken: Cookies.get("accord_refresh_token"),
         };
         console.log("registered new push notification service worker.");
         console.log(subscription);
@@ -3833,8 +3826,11 @@ export default function DashboardLayout({
         }, 100);
       });
       try {
-        console.log("Logging in with user id", currentUser!.id);
-        const [stompClient_, frame_] = await socketapi.connect(currentUser!.id);
+        console.log("ogging in with user id", currentUser!.id);
+        const [stompClient_, frame_] = await socketapi.connect(
+          currentUser!.username,
+          currentUser!.id
+        );
 
         if (stompClient_ && frame_) {
           setStompClient(stompClient_);

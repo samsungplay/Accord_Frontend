@@ -16,7 +16,7 @@ import moment from "moment";
 import api from "../api/api";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
-import Cookies from "js-cookie";
+
 import { FaGithub } from "react-icons/fa";
 import Link from "next/link";
 import LoadingScreen from "../components/LoadingScreen";
@@ -45,6 +45,19 @@ export default function AuthenticationPage() {
   const [pageLoading, setPageLoading] = useState(true);
   const windowSize = useWindowSize();
   const router = useRouter();
+
+  useEffect(() => {
+    const verifyAuthentication = async () => {
+      const res = await api.get("/authentication/authenticate", {
+        validateStatus: () => true,
+      });
+      if (res.status === 200) {
+        window.location.href = "/dashboard";
+      }
+    };
+
+    verifyAuthentication();
+  }, []);
 
   const resetAndSubmitRegisterForm = useCallback(
     (e: FormData) => {
@@ -195,7 +208,6 @@ export default function AuthenticationPage() {
     }) => {
       return api.post("/authentication/registerGithub", {
         ...registerData,
-        registrationToken: Cookies.get("github-registration-token") || "",
       });
     },
     onSettled(data) {
@@ -271,14 +283,6 @@ export default function AuthenticationPage() {
     },
     onSettled(data) {
       if (data?.status === 200) {
-        const refreshToken = data.data["refresh_token"];
-        const accessToken = data.data["access_token"];
-
-        if (accessToken && refreshToken) {
-          Cookies.set("accord_access_token", accessToken);
-          Cookies.set("accord_refresh_token", refreshToken);
-        }
-
         router.replace("/dashboard");
       } else if (data?.data && data?.data["error"]) {
         if (data.data["error"].includes("email")) {

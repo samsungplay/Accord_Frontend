@@ -1,5 +1,4 @@
 "use client";
-import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useCallback, useContext } from "react";
 import { IoIosLogOut } from "react-icons/io";
@@ -14,13 +13,11 @@ export default function Header({ children }: { children: React.ReactNode }) {
 
   const logoutMutation = useMutation({
     mutationFn: () => {
-      return api.post(`/pushNotification/unsubscribe`);
+      return api.post(`/users/logout`);
     },
     onSettled(data) {
       if (data?.status === 200) {
         setTimeout(() => {
-          Cookies.remove("accord_access_token");
-          Cookies.remove("accord_refresh_token");
           router.replace("/authentication");
         }, 50);
       } else if (data) {

@@ -37,7 +37,7 @@ import { useOnClickOutside, useWindowSize } from "usehooks-ts";
 import { User } from "../types/User";
 import ModalUtils from "../util/ModalUtil";
 import ModalContext from "../contexts/ModalContext";
-import Cookies from "js-cookie";
+
 import { useRouter } from "next/navigation";
 import { GiPeaceDove } from "react-icons/gi";
 import ChangePasswordForm from "./ChangePasswordForm";
@@ -161,9 +161,7 @@ export default function SettingsPage({
             "Because your username has changed, you will have to login again. Automatically logging out in 5 seconds..."
           );
           setTimeout(() => {
-            Cookies.remove("accord_access_token");
-            Cookies.remove("accord_refresh_token");
-            router.replace("/authentication");
+            logout();
           }, 5000);
         }
         queryClient.setQueryData(["user"], () => {
@@ -1557,6 +1555,27 @@ export default function SettingsPage({
   );
 
   const [playingCallTheme, setPlayingCallTheme] = useState(false);
+
+  const logoutMutation = useMutation({
+    mutationFn: () => {
+      return api.post(`/users/logout`);
+    },
+    onSettled(data) {
+      if (data?.status === 200) {
+        setTimeout(() => {
+          router.replace("/authentication");
+        }, 50);
+      } else if (data) {
+        ModalUtils.handleGenericError(modalContext, data);
+      }
+    },
+  });
+  const logout = useCallback(() => {
+    if (!logoutMutation.isPending) {
+      logoutMutation.mutate();
+    }
+  }, [logoutMutation.isPending]);
+
   return user ? (
     <div
       id="primaryModal"
@@ -1676,11 +1695,7 @@ export default function SettingsPage({
                 className={`flex items-center gap-2 text-lime-500 text-lg px-2 cursor-pointer transition hover:text-white hover:bg-lime-600 rounded-md
                 ${tab === "Logout" && "bg-lime-600 text-white"}`}
                 onClick={() => {
-                  setTimeout(() => {
-                    Cookies.remove("accord_access_token");
-                    Cookies.remove("accord_refresh_token");
-                    router.replace("/authentication");
-                  }, 100);
+                  logout();
                 }}
               >
                 <IoExitOutline />
