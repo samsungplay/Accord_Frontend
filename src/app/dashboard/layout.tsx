@@ -5661,7 +5661,7 @@ export default function DashboardLayout({
 
                         <SubSidebar>
                           <div className="flex justify-center mt-2">
-                            <input
+                            <div
                               onClick={() => {
                                 ModalUtils.openCustomModal(
                                   {
@@ -5683,10 +5683,10 @@ export default function DashboardLayout({
                                   true
                                 );
                               }}
-                              className="bg-lime-500 p-3 focus:outline-none rounded-md h-[2rem] cursor-pointer placeholder:text-lime-400"
-                              placeholder={"Find or start conversation"}
-                              readOnly
-                            />
+                              className="bg-lime-500 flex items-center transition hover:bg-opacity-70 text-lime-300 p-3 focus:outline-none rounded-md h-[2rem] cursor-pointer placeholder:text-lime-400"
+                            >
+                              Find or start a conversation
+                            </div>
                           </div>
 
                           <div className="flex flex-col h-[5rem] overflow-y-scroll mdh:h-auto mdh:overflow-y-hidden">
