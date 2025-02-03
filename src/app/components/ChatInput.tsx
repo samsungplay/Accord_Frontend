@@ -1705,13 +1705,19 @@ export default function ChatInput({
             >
               <Editable
                 onCompositionStart={(e) => {
-                  setComposingText(e.data);
+                  setTimeout(() => {
+                    setComposingText(e.data);
+                  }, 1);
                 }}
                 onCompositionUpdate={(e) => {
-                  setComposingText(e.data);
+                  setTimeout(() => {
+                    setComposingText(e.data);
+                  }, 1);
                 }}
                 onCompositionEnd={() => {
-                  setComposingText("");
+                  setTimeout(() => {
+                    setComposingText("");
+                  }, 1);
                 }}
                 tabIndex={disabled ? -1 : 0}
                 decorate={decorate}
