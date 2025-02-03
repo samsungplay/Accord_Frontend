@@ -1781,9 +1781,9 @@ export default function ChatInput({
                     }, 50);
                   }
                 }}
-                renderPlaceholder={
-                  customPlaceholderText ? renderPlaceholder : undefined
-                }
+                // renderPlaceholder={
+                //   customPlaceholderText ? renderPlaceholder : undefined
+                // }
                 placeholder={customPlaceholderText}
               />
             </Slate>
