@@ -741,14 +741,11 @@ export default function AuthenticationPage() {
                   <div className="flex justify-center gap-4">
                     <a
                       href={`${Constants.SERVER_URL_PATH}/oauth2/authorization/github`}
-                      className="text-black"
+                      className="text-black w-full h-full gap-2 flex justify-center items-center"
                     >
                       Sign in with Github
-                    </a>
-                    <div className="text-black">
-                      {" "}
                       <FaGithub size={24} />{" "}
-                    </div>
+                    </a>
                   </div>
                 </PrimaryButton>
 
