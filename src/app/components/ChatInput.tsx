@@ -1698,27 +1698,37 @@ export default function ChatInput({
             className="bg-lime-600 float-left ml-4 text-lime-300 placeholder:text-lime-300 hover:bg-opacity-70 focus:bg-opacity-70 transition duration-500 focus:shadow-md
                                 focus:outline-none caret-lime-300 w-full self-center max-h-[20rem] overflow-scroll"
           >
+            <div
+              style={{
+                width: emojiSearchViewWidth * 0.5,
+              }}
+              className={` ${
+                (editorText.length > 0 || composingText.length > 0) && "hidden"
+              } absolute whitespace-nowrap overflow-ellipsis overflow-hidden top-[25%] h-fit opacity-50 pointer-events-none`}
+            >
+              {customPlaceholderText}
+            </div>
             <Slate
               editor={editor}
               onSelectionChange={handleUpdateSearchViewQuery}
               initialValue={initialValue}
             >
               <Editable
-                // onCompositionStart={(e) => {
-                //   setTimeout(() => {
-                //     setComposingText(e.data);
-                //   }, 100);
-                // }}
-                // onCompositionUpdate={(e) => {
-                //   setTimeout(() => {
-                //     setComposingText(e.data);
-                //   }, 100);
-                // }}
-                // onCompositionEnd={() => {
-                //   setTimeout(() => {
-                //     setComposingText("");
-                //   }, 100);
-                // }}
+                onCompositionStart={(e) => {
+                  setTimeout(() => {
+                    setComposingText(e.data);
+                  }, 100);
+                }}
+                onCompositionUpdate={(e) => {
+                  setTimeout(() => {
+                    setComposingText(e.data);
+                  }, 100);
+                }}
+                onCompositionEnd={() => {
+                  setTimeout(() => {
+                    setComposingText("");
+                  }, 100);
+                }}
                 tabIndex={disabled ? -1 : 0}
                 decorate={decorate}
                 renderLeaf={renderLeaf}
@@ -1782,18 +1792,6 @@ export default function ChatInput({
                   }
                 }}
               />
-
-              <div
-                style={{
-                  width: emojiSearchViewWidth * 0.5,
-                }}
-                className={` ${
-                  (editorText.length > 0 || composingText.length > 0) &&
-                  "hidden"
-                } absolute whitespace-nowrap overflow-ellipsis overflow-hidden top-[25%] h-fit opacity-50 pointer-events-none`}
-              >
-                {customPlaceholderText}
-              </div>
             </Slate>
           </div>
         </Popover>
