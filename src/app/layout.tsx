@@ -7,6 +7,7 @@ import React from "react";
 const primaryFont = Kanit({ subsets: ["latin"], weight: ["400", "700"] });
 
 import ThemeManager from "./components/ThemeManager";
+import Constants from "./constants/Constants";
 
 export const metadata: Metadata = {
   title: "Accord",
@@ -15,6 +16,7 @@ export const metadata: Metadata = {
   authors: {
     name: "infiniteplay",
   },
+  icons: Constants.SERVER_STATIC_CONTENT_PATH + "accord_logo.png",
 };
 
 export default function RootLayout({
