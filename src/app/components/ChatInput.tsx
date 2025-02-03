@@ -1758,27 +1758,22 @@ export default function ChatInput({
                       }
                     }, 50);
                   } else {
-                    if (typingTimeoutRef.current) {
-                      clearTimeout(typingTimeoutRef.current);
-                    }
-
-                    setTyping(true);
-
-                    typingTimeoutRef.current = setTimeout(
-                      () => setTyping(false),
-                      1000
-                    );
-
-                    setTimeout(() => {
-                      handleUpdateSearchViewQuery();
-
-                      const text = GenericUtil.parseMarkdownText(editor);
-                      setEditorText(text);
-
-                      if (setBoundText) {
-                        setBoundText(text);
-                      }
-                    }, 50);
+                    // if (typingTimeoutRef.current) {
+                    //   clearTimeout(typingTimeoutRef.current);
+                    // }
+                    // setTyping(true);
+                    // typingTimeoutRef.current = setTimeout(
+                    //   () => setTyping(false),
+                    //   1000
+                    // );
+                    // setTimeout(() => {
+                    //   handleUpdateSearchViewQuery();
+                    //   const text = GenericUtil.parseMarkdownText(editor);
+                    //   setEditorText(text);
+                    //   if (setBoundText) {
+                    //     setBoundText(text);
+                    //   }
+                    // }, 50);
                   }
                 }}
                 // renderPlaceholder={
