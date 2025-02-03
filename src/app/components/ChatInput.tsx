@@ -1781,12 +1781,12 @@ export default function ChatInput({
                   }
                 }}
                 renderPlaceholder={
-                  GenericUtil.isTouchDevice() && customPlaceholderText
+                  !GenericUtil.isTouchDevice() && customPlaceholderText
                     ? renderPlaceholder
                     : undefined
                 }
                 placeholder={
-                  GenericUtil.isTouchDevice()
+                  !GenericUtil.isTouchDevice()
                     ? customPlaceholderText
                     : undefined
                 }
