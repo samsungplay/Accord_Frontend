@@ -39,6 +39,7 @@ const Constants = {
     `\\*\\*[^\\n\\r\\s*]+[^\\n\\r*]*[^\\n\\r\\s*]*\\*\\*`,
     "g"
   ),
+  editMarkRe: new RegExp(`&&[^\\n\\r\\s&]+[^\\n\\r&]*[^\\n\\r\\s&]*&&`, "g"),
   underlineRe: new RegExp(
     `\\_\\_[^\\n\\r\\s_]+[^\\n\\r_]*[^\\n\\r\\s_]*\\_\\_`,
     "g"

@@ -1180,6 +1180,10 @@ const ChatRecord = React.memo(
         isUserMentioned = true;
       }
       setIsUserMentioned(isUserMentioned);
+
+      if (!editMode && record.edited) {
+        Transforms.insertText(editor, " &&(edited)&&");
+      }
     }, [record.message, record.replyTargetSender, editMode, currentUser.id]);
 
     const useCacheTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -1192,17 +1196,7 @@ const ChatRecord = React.memo(
     }, [editor.children]);
     const renderLeaf = useCallback(
       (props: RenderLeafProps) => {
-        return props.leaf["editmark"] ? (
-          <span
-            style={{
-              fontSize:
-                0.75 * (12 + (chatFontScale / 100.0) * (24 - 12)) + "px",
-            }}
-            className="text-lime-300 ml-2"
-          >
-            (edited)
-          </span>
-        ) : (
+        return (
           <span
             {...props.attributes}
             className={`
@@ -1221,6 +1215,8 @@ const ChatRecord = React.memo(
                   "font-mono bg-lime-400 text-lime-700 rounded-md py-2"
                 }
                 ${props.leaf["blockquote"] && "border-l-4 border-lime-400 py-2"}
+
+                ${props.leaf["editmark"] && "text-lime-300"}
                 
                 ${props.leaf["underline"] && "underline"}
                 ${props.leaf["strikethrough"] && "line-through"}
@@ -1261,6 +1257,8 @@ const ChatRecord = React.memo(
                   ? 1.5 * (12 + (chatFontScale / 100.0) * (24 - 12)) + "px"
                   : props.leaf["heading1"] !== undefined
                   ? 1.875 * (12 + (chatFontScale / 100.0) * (24 - 12)) + "px"
+                  : props.leaf["editmark"] !== undefined
+                  ? 0.75 * (12 + (chatFontScale / 100.0) * (24 - 12)) + "px"
                   : "inherit",
             }}
             onClick={
@@ -1316,38 +1314,13 @@ const ChatRecord = React.memo(
 
         //process multiline markdowns
 
-        if (
-          decorationCache.current.has(entry[1].join("@")) &&
-          useCache.current
-        ) {
-          return decorationCache.current.get(entry[1].join("@"))!;
-        }
-
         if ((entry[0] as unknown as Editor)["operations"]) {
+          if (decorationCache.current.has("root") && useCache.current) {
+            return decorationCache.current.get("root")!;
+          }
           let allText = "";
           const lineLengths: number[] = [];
           const lines = [];
-
-          if (record.edited) {
-            const node = editor.children[editor.children.length - 1];
-            const textNode = node.children[node.children.length - 1];
-            let offset = 0;
-            if (Text.isText(textNode)) {
-              offset = textNode.text.length;
-            }
-
-            ranges.push({
-              editmark: true,
-              anchor: {
-                path: [editor.children.length - 1, node.children.length - 1],
-                offset: offset,
-              },
-              focus: {
-                path: [editor.children.length - 1, node.children.length - 1],
-                offset: offset,
-              },
-            });
-          }
 
           for (const node of entry[0].children) {
             const paragraphNode = node as Element;
@@ -1468,6 +1441,16 @@ const ChatRecord = React.memo(
               }
             }
           }
+          decorationCache.current.set("root", ranges);
+
+          return ranges;
+        }
+
+        if (
+          decorationCache.current.has(entry[1].join("@")) &&
+          useCache.current
+        ) {
+          return decorationCache.current.get(entry[1].join("@"))!;
         }
 
         if (!Text.isText(entry[0])) {
@@ -1567,6 +1550,13 @@ const ChatRecord = React.memo(
           });
         }
 
+        if (!editMode && record.edited) {
+          allMatches.push({
+            type: "editmark",
+            data: [...entry[0].text.matchAll(Constants.editMarkRe)],
+          });
+        }
+
         // console.log(allMatches[allMatches.length-1].data)
 
         const italicChecked: Set<number> = new Set();
@@ -1578,7 +1568,44 @@ const ChatRecord = React.memo(
           const data = matchEntry.data;
 
           for (const match of data) {
-            if (matchEntry.type === "searchcontent") {
+            if (matchEntry.type === "editmark") {
+              const matchString = match[0];
+              const start = match.index + 2;
+              const end = start + matchString.length - 4;
+              ranges.push({
+                greyed: true,
+                anchor: {
+                  path: entry[1],
+                  offset: match.index,
+                },
+                focus: {
+                  path: entry[1],
+                  offset: match.index + 2,
+                },
+              });
+              ranges.push({
+                editmark: true,
+                anchor: {
+                  path: entry[1],
+                  offset: start,
+                },
+                focus: {
+                  path: entry[1],
+                  offset: end,
+                },
+              });
+              ranges.push({
+                greyed: true,
+                anchor: {
+                  path: entry[1],
+                  offset: end,
+                },
+                focus: {
+                  path: entry[1],
+                  offset: end + 2,
+                },
+              });
+            } else if (matchEntry.type === "searchcontent") {
               const matchString = match[0];
               const start = match.index;
               const end = start + matchString.length;
@@ -2374,7 +2401,7 @@ const ChatRecord = React.memo(
 
         return ranges;
       },
-      [record.edited, searchContent]
+      [record.edited, searchContent, editMode]
     );
 
     const renderElement = useCallback(

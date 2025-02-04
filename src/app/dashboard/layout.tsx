@@ -3926,6 +3926,54 @@ export default function DashboardLayout({
             }
           );
 
+          const onUserStatusUpdate = stompClient_.subscribe(
+            `/user/${currentSocketUser}/general/onUserStatusUpdate`,
+            (message) => {
+              const payload: { targetUser: string; status: string } =
+                JSON.parse(message.body);
+
+              queryClient.setQueryData(
+                ["friends"],
+                (prev: { data: User[] }) => {
+                  return {
+                    data: prev.data.map((friend) => {
+                      if (
+                        friend.username + "@" + friend.id ===
+                        payload.targetUser
+                      ) {
+                        return {
+                          ...friend,
+                          status: payload.status,
+                        };
+                      }
+                      return friend;
+                    }),
+                  };
+                }
+              );
+
+              queryClient.setQueryData(
+                ["chatroom_dm"],
+                (prev: { data: ChatRoom[] }) => {
+                  return {
+                    data: prev.data.map((room) => ({
+                      ...room,
+                      participants: room.participants.map((participant) => {
+                        if (
+                          participant.username + "@" + participant.id ===
+                          payload.targetUser
+                        ) {
+                          return { ...participant, status: payload.status };
+                        }
+                        return participant;
+                      }),
+                    })),
+                  };
+                }
+              );
+            }
+          );
+
           const onEditProfile = stompClient_.subscribe(
             `/user/${currentSocketUser}/general/onEditProfile`,
             (message) => {
@@ -5180,6 +5228,7 @@ export default function DashboardLayout({
             onCallSound,
             onCallMusicSync,
             onEditProfile,
+            onUserStatusUpdate,
           ]);
 
           //websocket connected, ping janus session

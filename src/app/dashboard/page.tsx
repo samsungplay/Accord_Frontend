@@ -41,7 +41,6 @@ import React from "react";
 import CallContext from "../contexts/CallContext";
 
 export default function FriendsPage() {
-  const [isInputFocused, setIsInputFocused] = useState(false);
   const [friendRequestError, setFriendRequestError] = useState("");
   const [friendRequestSuccess, setFriendRequestSuccess] = useState("");
   const [divHeight, setDivHeight] = useState(0);
@@ -422,34 +421,12 @@ export default function FriendsPage() {
     [create1to1ChatRoomMutation]
   );
 
+  const [requestedUsername, setRequestedUsername] = useState("");
   //socket logic
   useSocket(
     stompContext?.stompClient,
     stompContext?.stompFrame,
     (stompClient, currentSocketUser) => {
-      const onUserStatusUpdate = stompClient.subscribe(
-        `/user/${currentSocketUser}/general/onUserStatusUpdate`,
-        (message) => {
-          const payload: { targetUser: string; status: string } = JSON.parse(
-            message.body
-          );
-
-          queryClient.setQueryData(["friends"], (prev: { data: User[] }) => {
-            return {
-              data: prev.data.map((friend) => {
-                if (friend.username + "@" + friend.id === payload.targetUser) {
-                  return {
-                    ...friend,
-                    status: payload.status,
-                  };
-                }
-                return friend;
-              }),
-            };
-          });
-        }
-      );
-
       const onCancelFriendRequest = stompClient.subscribe(
         `/user/${currentSocketUser}/general/onCancelFriendRequest`,
         (message) => {
@@ -500,7 +477,6 @@ export default function FriendsPage() {
       );
 
       return [
-        onUserStatusUpdate,
         onCancelFriendRequest,
         onSendFriendRequest,
         onRejectFriendRequest,
@@ -1320,6 +1296,8 @@ export default function FriendsPage() {
             action={handleSendFriendRequest}
           >
             <input
+              value={requestedUsername}
+              onChange={(e) => setRequestedUsername(e.target.value)}
               id="request_username"
               name="requested_username"
               className={`bg-lime-700 text-lime-300 ${
@@ -1328,16 +1306,13 @@ export default function FriendsPage() {
                   : "focus:outline-lime-800"
               } placeholder:text-lime-400 rounded-md mt-4 w-full p-3`}
               placeholder="e.g. user#15"
-              onFocus={() => setIsInputFocused(true)}
-              onBlur={() => {
-                setTimeout(() => setIsInputFocused(false), 100);
-              }}
             />
 
             <div className="absolute right-4 top-[1.375rem]">
               <PrimaryButton
                 disabled={
-                  !isInputFocused || sendFriendRequestMutation.isPending
+                  requestedUsername.length === 0 ||
+                  sendFriendRequestMutation.isPending
                 }
                 buttonType="submit"
                 customStyles="bg-lime-500 px-2"
