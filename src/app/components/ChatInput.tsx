@@ -1722,7 +1722,7 @@ export default function ChatInput({
                 decorate={decorate}
                 renderLeaf={renderLeaf}
                 renderElement={renderElement}
-                className={`focus:outline-none relative`}
+                className={`focus:outline-none relative no-scrollbar`}
                 onPaste={(e) => {
                   if (e.clipboardData && handleOnFileUpload) {
                     handleOnFileUpload(e.clipboardData.files);

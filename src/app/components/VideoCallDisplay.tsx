@@ -590,6 +590,7 @@ export default function VideoCallDisplay({
       >
         <div className="absolute bottom-[50%] left-[50%]">
           <EmojiBubble
+            userIdKey={currentUser?.id}
             shortCodes={
               emojiBubbleShortCode
                 ? emojiBubbleShortCode.substring(

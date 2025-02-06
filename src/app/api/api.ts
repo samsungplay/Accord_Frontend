@@ -14,7 +14,7 @@ api.interceptors.response.use(
   async (error) => {
     const res = error.response;
 
-    if (res.status === 401) {
+    if (res.status === 401 && window.location.pathname !== "/authentication") {
       window.location.href = "/authentication";
     }
 
