@@ -850,10 +850,6 @@ export default function SettingsPage({
     return videoCodecs;
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem("videoCodec", videoCodec);
-  }, [videoCodec]);
-
   const [streamAttenuation, setStreamAttenuation] = useState(
     localStorage.getItem("streamAttenuation") ?? "yes"
   );
@@ -2991,9 +2987,11 @@ export default function SettingsPage({
                         : videoCodec.split("/")[1]
                     }
                     onSelected={(i) => {
-                      setVideoCodec(
-                        [...supportedVideoCodecs.map((e) => e.mimeType)][i]
-                      );
+                      const codec = [
+                        ...supportedVideoCodecs.map((e) => e.mimeType),
+                      ][i];
+                      setVideoCodec(codec);
+                      localStorage.setItem("videoCodec", codec);
                     }}
                     placeholder="Select.."
                     id="videoCodecSpinner"

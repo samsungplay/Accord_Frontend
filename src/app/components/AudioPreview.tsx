@@ -414,7 +414,10 @@ export default function AudioPreview({
   }, [volumeProgress]);
 
   const content = (
-    <div className="bg-transparent flex items-center gap-2 w-full">
+    <div
+      id={"contentRoot_" + uuid}
+      className="bg-transparent flex items-center gap-2 w-full"
+    >
       <MdAudiotrack size={36} />
       <div className="rounded-full grid place-content-center h-[2rem] w-[2rem] bg-lime-700 cursor-pointer group/audioplayer transition hover:bg-opacity-70 shadow-md p-2">
         <div
@@ -442,6 +445,9 @@ export default function AudioPreview({
       </p>
 
       <Popover
+        parentElement={
+          document.getElementById("contentRoot_" + uuid) ?? document.body
+        }
         positions={["top"]}
         content={
           <div
@@ -489,6 +495,9 @@ export default function AudioPreview({
       </Popover>
 
       <Popover
+        parentElement={
+          document.getElementById("contentRoot_" + uuid) ?? document.body
+        }
         positions={["top"]}
         isOpen={volumeControlOpen}
         reposition={false}

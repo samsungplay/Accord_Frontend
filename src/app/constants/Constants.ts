@@ -83,7 +83,7 @@ const Constants = {
   emojiSearchRe: new RegExp(`:[\\w+\\-]+[\\w\\-+][\\w\\-+]*`, "g"),
   urlRe: new RegExp(urlRegex, "g"),
   urlEntireMatchRe: new RegExp("^" + urlRegex + "$", "g"),
-  fileNameRe: new RegExp("^[\\w\\-. ]+$"),
+  fileNameRe: new RegExp("^[\\p{L}\\p{N}\\-. ]+$", "u"),
   mentionRe: new RegExp(
     `\\[m\\][^\\n\\r\\s\\[m\\]]+[^\\n\\r\\[m\\]]*[^\\n\\r\\s\\[\\m\\]]*\\[m\\]`,
     "g"

@@ -509,6 +509,9 @@ export default function ChatroomPage() {
     getNextPageParam(lastPage) {
       //get previous page's last seen id
 
+      if (!lastPage?.data) {
+        return undefined;
+      }
       if (lastPage.data.length < Constants.CLIENT_PER_PAGE_COUNT)
         return undefined;
 
@@ -517,6 +520,10 @@ export default function ChatroomPage() {
 
     getPreviousPageParam(firstPage) {
       //get next page's first seen id
+
+      if (!firstPage?.data) {
+        return undefined;
+      }
 
       if (firstPage.data.length === 0) {
         return undefined;
