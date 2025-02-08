@@ -6,15 +6,6 @@ body {
   height: 100vh;
   height: 100dvh;
   @apply bg-gradient-to-r from-lime-500 to-lime-600;
-  -ms-overflow-style: none;
-  /* Internet Explorer 10+ */
-  scrollbar-width: none;
-  /* Firefox */
-}
-
-body::-webkit-scrollbar {
-  display: none;
-  /* Safari and Chrome */
 }
 
 body::before {
@@ -105,6 +96,7 @@ progress {
 
 .no-scrollbar::-webkit-scrollbar {
   display: none;
+  width: 0px;
   /* Safari and Chrome */
 }
 

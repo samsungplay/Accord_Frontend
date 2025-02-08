@@ -84,7 +84,7 @@ export default function VoteInfoView({
           })}
         </div>
 
-        <div className="w-full h-full overflow-scroll min-h-[15rem] max-h-[25rem] bg-lime-700 bg-opacity-70 rounded-br-md flex flex-col gap-1">
+        <div className="w-full h-full overflow-y-scroll min-h-[15rem] max-h-[25rem] bg-lime-700 bg-opacity-70 rounded-br-md flex flex-col gap-1">
           {votesFiltered.map((vote) => {
             return (
               <div

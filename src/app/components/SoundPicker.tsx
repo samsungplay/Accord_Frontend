@@ -1154,7 +1154,7 @@ export default function SoundPicker({
           positions={["bottom", "top", "right", "left"]}
           onClickOutside={() => setEmojiOpen(false)}
           content={
-            <div className="mb-2 ml-[2.5rem] overflow-scroll">
+            <div className="mb-2 ml-[2.5rem] overflow-y-scroll">
               <div className="w-full h-full sm:hidden">
                 <EmojiPicker
                   perLine={7}
@@ -1225,7 +1225,7 @@ export default function SoundPicker({
             />
           </div>
 
-          <div className="flex animate-fadeIn flex-wrap overflow-scroll">
+          <div className="flex animate-fadeIn flex-wrap overflow-y-scroll">
             {soundData
               .filter(
                 (sound) =>

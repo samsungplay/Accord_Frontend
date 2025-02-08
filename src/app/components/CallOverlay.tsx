@@ -1662,7 +1662,7 @@ export default function CallOverlay({
                 }}
                 positions={["bottom", "right", "left", "top"]}
                 content={
-                  <div className="mb-2 overflow-scroll">
+                  <div className="mb-2 overflow-y-scroll">
                     <div className="w-full h-full sm:hidden">
                       <EmojiPicker
                         perLine={7}

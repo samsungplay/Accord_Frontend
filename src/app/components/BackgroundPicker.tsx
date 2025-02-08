@@ -611,7 +611,7 @@ export default function BackgroundPicker({
               tab === 1 && personalImages.length === 0
                 ? "grid-cols-1"
                 : "grid-cols-1 md:grid-cols-3"
-            }  w-full justify-center h-[50vh] overflow-scroll`}
+            }  w-full justify-center h-[50vh] overflow-y-scroll`}
           >
             {(tab === 0 ? images : personalImages)
               .slice(

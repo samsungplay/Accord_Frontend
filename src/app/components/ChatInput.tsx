@@ -1710,7 +1710,7 @@ export default function ChatInput({
         >
           <div
             className="bg-lime-600 float-left ml-4 text-lime-300 placeholder:text-lime-300 hover:bg-opacity-70 focus:bg-opacity-70 transition duration-500 focus:shadow-md
-                                focus:outline-none caret-lime-300 w-full self-center max-h-[20rem] overflow-scroll"
+                                focus:outline-none caret-lime-300 w-full self-center max-h-[20rem] overflow-x-hidden overflow-y-scroll"
           >
             <Slate
               editor={editor}
@@ -1810,7 +1810,7 @@ export default function ChatInput({
           isOpen={emojiMenuOpen}
           positions={["top", "bottom"]}
           content={
-            <div className="mb-2 overflow-scroll">
+            <div className="mb-2 overflow-y-scroll">
               <div className="w-full h-full sm:hidden">
                 <EmojiPicker perLine={7} onEmojiSelect={handleEmojiSelect} />
               </div>

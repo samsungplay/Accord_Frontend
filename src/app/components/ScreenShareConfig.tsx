@@ -194,7 +194,7 @@ export default function ScreenShareConfig({
   }, [audio, selectedFps, selectedResolution, pending]);
 
   return (
-    <div className="text-white flex flex-col gap-2 p-2 w-fit max-w-[100vw] max-h-[80vh] overflow-scroll">
+    <div className="text-white flex flex-col gap-2 p-2 w-fit max-w-[100vw] max-h-[80vh] overflow-y-scroll">
       {resTip.length > 0 && (
         <p className="text-lg text-lime-300">
           <span className="font-bold">Note</span>: {resTip}
