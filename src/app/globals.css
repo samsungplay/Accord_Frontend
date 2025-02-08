@@ -96,7 +96,6 @@ progress {
 
 .no-scrollbar::-webkit-scrollbar {
   display: none;
-  width: 0px;
   /* Safari and Chrome */
 }
 
