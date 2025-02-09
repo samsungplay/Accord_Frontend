@@ -600,7 +600,9 @@ export default function VideoCallDisplay({
                 : displayDisabled
                 ? "bg-gray-500"
                 : "bg-lime-600"
-            } animate-[fadeIn_1s_ease-in-out_forwards] rounded-md max-h-[8rem] h-[8rem]`
+            } animate-[fadeIn_1s_ease-in-out_forwards] rounded-md ${
+              overlayFullscreen ? "h-[55vh]" : "h-[28vh]"
+            }`
           : `${
               overlayFullscreen ? "h-auto max-h-[55vh]" : "h-[28vh]"
             } bg-lime-600 rounded-md`
