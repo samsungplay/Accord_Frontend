@@ -1285,7 +1285,7 @@ export default function CallOverlay({
     >
       <div
         id="overlayContainer"
-        className={`h-[45vh] self-center bg-lime-400 shadow-lg text-white
+        className={`h-[45vh] w-full self-center bg-lime-400 shadow-lg text-white
         overflow-y-scroll flex flex-col gap-1 p-0 absolute z-[9] transition-all top-0
         ${minimized ? "max-h-0" : "max-h-[45vh]"}
         ${playExitAnimation ? "animate-fadeOutDown" : "animate-fadeInUp"}
@@ -1313,7 +1313,10 @@ export default function CallOverlay({
           </div>
         </div>
 
-        <div className="p-2 flex w-full items-center justify-center mt-auto relative gap-2 flex-wrap">
+        <div
+          id="callAvatarsContainer"
+          className="p-2 flex w-full items-center justify-center mt-auto relative gap-2 flex-wrap"
+        >
           {participantAvatars}
         </div>
 

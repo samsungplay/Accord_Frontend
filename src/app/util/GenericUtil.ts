@@ -282,7 +282,8 @@ const monitorPreview = (
             .then((res) => {
               if (res.status !== 200) {
                 console.error("failed to send preview frame canvas to server.");
-              } else console.log("captured preview frame & sent");
+              }
+              //  else console.log("captured preview frame & sent");
 
               captureInterval = setTimeout(handleCapture, 5000);
             });

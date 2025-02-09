@@ -4280,7 +4280,7 @@ export default function ChatroomPage() {
 
               <div
                 id="chatView"
-                className="flex overflow-scroll flex-col-reverse relative max-h-[100%}"
+                className="flex overflow-x-hidden overflow-y-scroll flex-col-reverse relative max-h-[100%}"
                 ref={setChatViewRef}
                 onDragEnter={(e) => {
                   if (e.dataTransfer.items.length > 0)

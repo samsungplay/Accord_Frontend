@@ -45,7 +45,7 @@ export default function RightClickMenuWrapper({
   return (
     <div
       ref={ref}
-      className="cursor-pointer relative"
+      className="cursor-pointer relative w-full h-full"
       onContextMenu={(e) => {
         e.preventDefault();
         handleShowMenu(e.nativeEvent.offsetX, e.nativeEvent.offsetY);

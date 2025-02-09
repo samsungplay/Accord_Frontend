@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -206,6 +207,7 @@ export default function VideoCallDisplay({
   const hasFrameIncoming = useRef<boolean>(false);
 
   useEffect(() => {
+    console.log(user.id, windowSize.width);
     setMediaWidth(windowSize.width);
   }, [windowSize.width]);
 
@@ -261,16 +263,47 @@ export default function VideoCallDisplay({
         lastMediaTime = metadata.mediaTime;
         lastFrameRun = metadata.presentedFrames;
 
-        videoRef.current.requestVideoFrameCallback(computeFps);
+        fpsComputer = videoRef.current.requestVideoFrameCallback(computeFps);
       } else {
         fps = -5;
       }
     };
 
-    const fpsComputer = videoRef.current
-      ? videoRef.current.requestVideoFrameCallback(computeFps)
-      : undefined;
+    let fpsComputer: number | undefined = undefined;
 
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            if (videoRef.current) {
+              if (fpsComputer)
+                videoRef.current.cancelVideoFrameCallback(fpsComputer);
+              fpsComputer =
+                videoRef.current.requestVideoFrameCallback(computeFps);
+
+              if (videoRef.current.paused) videoRef.current.play();
+            }
+          } else {
+            if (fpsComputer) {
+              videoRef.current?.cancelVideoFrameCallback(fpsComputer);
+            }
+          }
+        });
+      },
+      {
+        root: null,
+        rootMargin: "0px",
+        threshold: 0.1,
+      }
+    );
+
+    const containerElement = document.getElementById(
+      "videoCallDisplay-" + user.id
+    );
+
+    if (containerElement) {
+      observer.observe(containerElement);
+    }
     const getCodecInfo = () => {
       let codecSet = false;
       if (data && data.getVideoTracks().length === 0) {
@@ -354,6 +387,7 @@ export default function VideoCallDisplay({
     }, 500);
 
     return () => {
+      observer.disconnect();
       clearInterval(interval);
       clearInterval(monitorMetricsInterval);
       if (frameHeartbeat.current) {
@@ -543,6 +577,7 @@ export default function VideoCallDisplay({
   const isLightMode = useIsLightMode();
   return (
     <div
+      id={"videoCallDisplay-" + user.id}
       ref={setContainerRef}
       className={`${customClassName} ${
         (displayWarning || displayDisabled) &&
@@ -567,9 +602,10 @@ export default function VideoCallDisplay({
             : mediaWidth < 768
             ? Math.max(
                 Number.parseInt(width.substring(0, width.indexOf("%"))),
-                45
+                50
               ) + "%"
             : width,
+
         zIndex: zIndex,
       }}
     >
@@ -810,8 +846,8 @@ export default function VideoCallDisplay({
           controls={false}
           className={`${viewSwapped ? "animate-fadeIn" : "animate-fadeIn"} ${
             fullScreen
-              ? "w-[100vw] max-h-[100vh] object-contain"
-              : "w-full h-auto object-cover"
+              ? "w-[100vw] max-h-[100vh] h-auto object-contain mt-[50vh] -translate-y-[50%]"
+              : "w-full h-full object-cover"
           } rounded-md ${
             callContext?.callDecorator[user.id] === "sound"
               ? "border-white"
