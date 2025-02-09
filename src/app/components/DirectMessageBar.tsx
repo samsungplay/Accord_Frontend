@@ -436,6 +436,7 @@ export default function DirectMessageBar({
           pathname !== "/dashboard/chatroom/" + chatroom.id &&
           "hidden"
         }
+          ${isMuted && "opacity-50"}
          
         ${
           hasIncomingCall

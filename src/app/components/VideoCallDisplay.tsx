@@ -413,6 +413,7 @@ export default function VideoCallDisplay({
   const [displayWarning, setDisplayWarning] = useState(false);
   const [displayDisabled, setDisplayDisabled] = useState(false);
   const [allVideosLoaded, setAllVideosLoaded] = useState(0);
+  const [focused, setFocused] = useState(false);
 
   const warningTimeout = useRef<NodeJS.Timeout | null>(null);
   const modalContext = useContext(ModalContext);
@@ -585,6 +586,9 @@ export default function VideoCallDisplay({
   const isLightMode = useIsLightMode();
   return (
     <div
+      onClick={() => {
+        setFocused((prev) => !prev);
+      }}
       id={"videoCallDisplay-" + user.id}
       ref={setContainerRef}
       className={`${customClassName} ${
@@ -608,15 +612,16 @@ export default function VideoCallDisplay({
             } bg-lime-600 rounded-md`
       } items-center justify-center relative border-2`}
       style={{
-        width:
-          mediaWidth < 640
-            ? "100%"
-            : mediaWidth < 768
-            ? Math.max(
-                Number.parseInt(width.substring(0, width.indexOf("%"))),
-                50
-              ) + "%"
-            : width,
+        width: focused
+          ? "100%"
+          : mediaWidth < 640
+          ? "100%"
+          : mediaWidth < 768
+          ? Math.max(
+              Number.parseInt(width.substring(0, width.indexOf("%"))),
+              50
+            ) + "%"
+          : width,
 
         zIndex: zIndex,
       }}
@@ -743,7 +748,8 @@ export default function VideoCallDisplay({
                     description="Preview"
                     backgroundColor="bg-transparent"
                     customTextColor="text-lime-300"
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       handleOpenPreview();
                     }}
                   >
@@ -798,7 +804,8 @@ export default function VideoCallDisplay({
                 backgroundColor="bg-transparent"
                 direction="down"
                 description={showDetails ? "Hide Metrics" : "Show Metrics"}
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   setShowDetails((prev) => !prev);
                 }}
               >
@@ -806,7 +813,8 @@ export default function VideoCallDisplay({
               </FloatingButton>
             </div>
             <div
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 if (containerRef) {
                   if (!fullScreen) {
                     containerRef.requestFullscreen();
@@ -827,7 +835,8 @@ export default function VideoCallDisplay({
             </div>
 
             <div
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 if (videoRef.current) {
                   if (!pip) {
                     videoRef.current.requestPictureInPicture();
