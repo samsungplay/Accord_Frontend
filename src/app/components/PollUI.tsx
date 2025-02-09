@@ -250,7 +250,7 @@ export default function PollUI({
       />,
       true
     );
-  }, []);
+  }, [poll, options, optionVotesCount, record.pollVotes]);
 
   return (
     <div className="w-[90%] sm:w-[60%] bg-lime-700 text-lime-400 rounded-md p-2">
