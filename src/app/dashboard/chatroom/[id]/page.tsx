@@ -4667,7 +4667,7 @@ export default function ChatroomPage() {
                 showMemberList
                   ? "max-w-[15rem] sm:max-w-[20rem] md:max-w-[25rem] lg:max-w-[35rem] p-4"
                   : "max-w-0"
-              } fixed right-0 md:relative w-fit h-full transition-all duration-300 shadow-lg bg-lime-600 text-lime-400 overflow-y-scroll`}
+              } fixed z-[15] right-0 md:relative w-fit h-full transition-all duration-300 shadow-lg bg-lime-600 text-lime-400 overflow-y-scroll`}
               style={{}}
             >
               <div className="flex flex-nowrap items-center">

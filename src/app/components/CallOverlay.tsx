@@ -1298,7 +1298,7 @@ export default function CallOverlay({
           }`,
         }}
       >
-        <div className="absolute flex items-center cursor-pointer justify-center bottom-0 right-0 m-[1rem] z-10">
+        <div className="absolute flex items-center bg-black opacity-30 p-1 rounded-md cursor-pointer justify-center top-0 right-0 m-[1rem] z-[40]">
           <div
             onClick={() => {
               handleToggleFullScreen();

@@ -225,7 +225,10 @@ export default function VideoCallDisplay({
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setFullScreen(document.fullscreenElement !== null);
+      setFullScreen(
+        document.fullscreenElement !== null &&
+          document.fullscreenElement.id !== "overlayContainer"
+      );
     }, 100);
 
     let lastMediaTime = 0;
@@ -593,7 +596,7 @@ export default function VideoCallDisplay({
                 ? "bg-gray-500"
                 : "bg-lime-600"
             } animate-[fadeIn_1s_ease-in-out_forwards] rounded-md max-h-[8rem] h-[8rem]`
-          : "max-h-[50rem] h-auto"
+          : "max-h-[50rem] aspect-video bg-lime-600 rounded-md"
       } items-center justify-center relative border-2`}
       style={{
         width:
@@ -847,12 +850,8 @@ export default function VideoCallDisplay({
           className={`${viewSwapped ? "animate-fadeIn" : "animate-fadeIn"} ${
             fullScreen
               ? "w-[100vw] max-h-[100vh] h-auto object-contain mt-[50vh] -translate-y-[50%]"
-              : "w-full h-full object-cover"
-          } rounded-md ${
-            callContext?.callDecorator[user.id] === "sound"
-              ? "border-white"
-              : "border-transparent"
-          } border-2 ${hiddenMode ? "hidden" : "block"}`}
+              : "w-full h-full object-contain"
+          } rounded-md ${hiddenMode ? "hidden" : "block"}`}
         ></video>
 
         {user.isVideoEnabled &&
