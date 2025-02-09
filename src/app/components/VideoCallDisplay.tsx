@@ -187,6 +187,7 @@ export default function VideoCallDisplay({
   ]);
   const [mediaWidth, setMediaWidth] = useState(1000);
   const [fullScreen, setFullScreen] = useState(false);
+  const [overlayFullscreen, setOverlayFullscreen] = useState(false);
   const [metrics, setMetrics] = useState<{
     width: number;
     height: number;
@@ -228,6 +229,10 @@ export default function VideoCallDisplay({
       setFullScreen(
         document.fullscreenElement !== null &&
           document.fullscreenElement.id !== "overlayContainer"
+      );
+      setOverlayFullscreen(
+        document.fullscreenElement !== null &&
+          document.fullscreenElement.id === "overlayContainer"
       );
     }, 100);
 
@@ -596,7 +601,9 @@ export default function VideoCallDisplay({
                 ? "bg-gray-500"
                 : "bg-lime-600"
             } animate-[fadeIn_1s_ease-in-out_forwards] rounded-md max-h-[8rem] h-[8rem]`
-          : "max-h-[50rem] aspect-video bg-lime-600 rounded-md"
+          : `${
+              overlayFullscreen ? "h-auto max-h-[55vh]" : "h-[28vh]"
+            } bg-lime-600 rounded-md`
       } items-center justify-center relative border-2`}
       style={{
         width:
@@ -850,7 +857,7 @@ export default function VideoCallDisplay({
           className={`${viewSwapped ? "animate-fadeIn" : "animate-fadeIn"} ${
             fullScreen
               ? "w-[100vw] max-h-[100vh] h-auto object-contain mt-[50vh] -translate-y-[50%]"
-              : "w-full h-full object-contain"
+              : "w-full h-full max-h-[55vh] object-contain"
           } rounded-md ${hiddenMode ? "hidden" : "block"}`}
         ></video>
 
@@ -869,7 +876,7 @@ export default function VideoCallDisplay({
               controls={false}
               className={`${
                 viewSwapped ? "animate-fadeIn" : "animate-fadeIn"
-              } absolute bottom-[0.25rem] right-[0.25rem] w-[30%] z-20 mt-4 h-auto object-cover rounded-md`}
+              } absolute bottom-[0.25rem] right-[0.25rem] w-[30%] z-20 mt-4 bg-lime-700 aspect-video object-contain rounded-md`}
             ></video>
           )}
       </RightClickMenuWrapper>
