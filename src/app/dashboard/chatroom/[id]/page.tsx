@@ -2702,7 +2702,10 @@ export default function ChatroomPage() {
 
       if (clientLatestMessageId === record.id) {
         dividerText = "New Message";
-      } else if (nextRecordDate.getDate() !== currentRecordDate.getDate()) {
+      } else if (
+        nextRecordDate.getDate() !== currentRecordDate.getDate() ||
+        (!chatRecords.hasNextPage && i === flatChatRecords.length - 1)
+      ) {
         dividerText = format(record.date, "LLLL dd, yyyy");
       }
 
@@ -2744,6 +2747,7 @@ export default function ChatroomPage() {
     recentChatNotificationCount,
     currentChatRoom?.latestMessageId,
     clientLatestMessageId,
+    chatRecords.hasNextPage,
   ]);
 
   const pendingChatRenderData = useMemo(() => {
@@ -2769,7 +2773,10 @@ export default function ChatroomPage() {
       }
       let dividerText = "";
 
-      if (nextRecordDate.getDate() !== currentRecordDate.getDate()) {
+      if (
+        nextRecordDate.getDate() !== currentRecordDate.getDate() ||
+        (!chatRecords.hasNextPage && flatChatRecords.length === 0)
+      ) {
         dividerText = format(record.date, "LLLL dd, yyyy");
       }
 
@@ -2805,7 +2812,7 @@ export default function ChatroomPage() {
     });
 
     return renderdata;
-  }, [pendingMessages, flatChatRecords]);
+  }, [pendingMessages, flatChatRecords, chatRecords.hasNextPage]);
 
   const windowSize = useWindowSize();
   const previousWindowHeightCategoryRef = useRef<number>(0);
