@@ -156,7 +156,7 @@ export default function ProfileAvatar({
         {profileImagePlaceholder !== "default" &&
           (user?.profileImageUrl?.length ?? 0) === 0 && (
             <img
-              className="rounded-full object-cover"
+              className="rounded-full object-cover max-w-none"
               ref={imageRef}
               src=""
               style={{
@@ -167,7 +167,7 @@ export default function ProfileAvatar({
           )}
         {(user?.profileImageUrl?.length ?? 0) > 0 && (
           <img
-            className="rounded-full w-[4rem] h-[4rem] object-cover"
+            className="rounded-full w-[4rem] h-[4rem] object-cover max-w-none"
             src={Constants.SERVER_STATIC_CONTENT_PATH + user.profileImageUrl!}
             style={{
               width: size.toString() + "px",
@@ -217,7 +217,7 @@ export default function ProfileAvatar({
             {profileImagePlaceholder !== "default" &&
               (secondaryUser?.profileImageUrl?.length ?? 0) === 0 && (
                 <img
-                  className="rounded-full object-cover"
+                  className="rounded-full object-cover max-w-none"
                   ref={imageRef}
                   src=""
                   style={{
@@ -228,7 +228,7 @@ export default function ProfileAvatar({
               )}
             {(secondaryUser?.profileImageUrl?.length ?? 0) > 0 && (
               <img
-                className="rounded-full w-[4rem] h-[4rem] object-cover"
+                className="rounded-full w-[4rem] h-[4rem] object-cover max-w-none"
                 src={
                   Constants.SERVER_STATIC_CONTENT_PATH +
                   secondaryUser?.profileImageUrl

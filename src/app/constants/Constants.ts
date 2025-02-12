@@ -71,12 +71,9 @@ const Constants = {
   maskedLinkeRe: new RegExp(`\\[[^\\n\\r]+\\]\\(${urlRegex}\\)`, "g"),
   listRe: new RegExp(`^[\\-#\\s>]*[\\-]\\s[^\\n\\r\\-]+`, "g"),
   blockQuoteRe: new RegExp(`^[\\-#\\s]*>\\s[^\\n\\r]*`, "g"),
-  codeRe: new RegExp(
-    `\\'[^\\n\\r\\s\\']+[^\\n\\r\\']*[^\\n\\r\\s\\']*\\'`,
-    "g"
-  ),
+  codeRe: new RegExp(`\`[^\\n\\r\\s\`]+[^\\n\\r\`]*[^\\n\\r\\s\`]*\``, "g"),
   multilineCodeRe: new RegExp(
-    `\\'\\'\\'[^\\n\\r\\s\\']+[^\\']*[^\\n\\r\\'\\s]*\\'\\'\\'`,
+    `\`\`\`[^\\n\\r\\s\`]+[^\`]*[^\\n\\r\`\\s]*\`\`\``,
     "g"
   ),
   emojiRe: new RegExp(`:[\\w+\\-]+[\\w\\-+][\\w\\-+]*:`, "g"),
