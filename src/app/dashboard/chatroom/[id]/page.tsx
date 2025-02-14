@@ -113,6 +113,7 @@ export default function ChatroomPage() {
   const [showSendButton, setShowSendButton] = useState(true);
   const [convertEmoticon, setConvertEmoticon] = useState(false);
   const [previewSyntax, setPreviewSyntax] = useState(false);
+  const [voiceInputMode, setVoiceInputMode] = useState("");
 
   useLayoutEffect(() => {
     const handler = (e: StorageEvent | undefined) => {
@@ -127,6 +128,8 @@ export default function ChatroomPage() {
         setConvertEmoticon(e.newValue === "yes");
       } else if (e && e.key === "previewSyntax") {
         setPreviewSyntax(e.newValue === "yes");
+      } else if (e && e.key === "inputMode") {
+        setVoiceInputMode(e.newValue ?? "Voice Activity");
       }
     };
 
@@ -2365,6 +2368,21 @@ export default function ChatroomPage() {
       }
     },
   });
+
+  const handleAttachFile = useCallback((file: File) => {
+    setAttachments((prev) => {
+      if (!prev) {
+        return [{ file, spoiler: false }];
+      }
+      return [
+        ...prev,
+        {
+          file,
+          spoiler: false,
+        },
+      ];
+    });
+  }, []);
 
   const handleAttachAsTextFile = useCallback(
     (message: string, editor: Editor) => {
@@ -4658,6 +4676,9 @@ export default function ChatroomPage() {
                   showSendButton={showSendButton}
                   convertEmoticon={convertEmoticon}
                   previewSyntax={previewSyntax}
+                  handleAttachFile={handleAttachFile}
+                  showVoiceMessage
+                  voiceInputMode={voiceInputMode}
                   customPlaceholderText={
                     "Message " +
                     GenericUtil.computeChatRoomName(

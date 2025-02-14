@@ -6,7 +6,7 @@ import {
   BsEmojiSmile,
   BsFillSendFill,
 } from "react-icons/bs";
-import { FaFileUpload, FaPoll, FaPlus } from "react-icons/fa";
+import { FaFileUpload, FaPoll, FaPlus, FaStop } from "react-icons/fa";
 import { Popover } from "react-tiny-popover";
 import {
   Slate,
@@ -52,9 +52,21 @@ import MentionBlock from "./MentionBlock";
 import MentionSearchView from "./MentionSearchView";
 import PrimaryButton from "./PrimaryButton";
 import TenorPicker from "./TenorPicker";
-import { MdGifBox, MdOutlineGifBox } from "react-icons/md";
+import {
+  MdGifBox,
+  MdKeyboardVoice,
+  MdOutlineGifBox,
+  MdOutlineKeyboardVoice,
+} from "react-icons/md";
 import GenericUtil from "../util/GenericUtil";
 import api from "../api/api";
+import CallContext from "../contexts/CallContext";
+import { ScaleLoader } from "react-spinners";
+import useIsLightMode from "../hooks/useIsLightMode";
+import SoundUtil from "../util/SoundUtil";
+
+import { format } from "date-fns";
+import dynamic from "next/dynamic";
 
 type ChatInputType = {
   setChatInputRef?: Dispatch<SetStateAction<HTMLDivElement | null>>;
@@ -70,6 +82,7 @@ type ChatInputType = {
   attachments?: { file: File; spoiler: boolean }[] | null;
   fileUploaderRef?: RefObject<HTMLInputElement>;
   handleAttachAsTextFile?: (message: string, editor: Editor) => void;
+  handleAttachFile?: (file: File) => void;
   handleOnFileUpload?: (files: FileList | null) => void;
   disabled?: boolean;
   chatFontScale?: number;
@@ -77,13 +90,16 @@ type ChatInputType = {
   showSendButton?: boolean;
   convertEmoticon?: boolean;
   showGifMenu?: boolean;
+  showVoiceMessage?: boolean;
   previewSyntax?: boolean;
   emojiZIndex?: number;
   focusOnMount?: boolean;
   customInitialText?: string;
+  voiceInputMode?: string;
 
   setBoundText?: Dispatch<SetStateAction<string>>;
 };
+
 export default function ChatInput({
   fileUploaderRef,
   attachments,
@@ -98,6 +114,7 @@ export default function ChatInput({
   currentUser,
   initialValue,
   handleAttachAsTextFile,
+  handleAttachFile,
   handleOnFileUpload,
   disabled,
   chatFontScale = 33.33333333,
@@ -109,6 +126,8 @@ export default function ChatInput({
   emojiZIndex,
   focusOnMount = true,
   customInitialText,
+  showVoiceMessage,
+  voiceInputMode = "",
   setBoundText,
 }: ChatInputType) {
   const [chatMenuOpen, setChatMenuOpen] = useState(false);
@@ -117,6 +136,7 @@ export default function ChatInput({
   const [mentionQuery, setMentionQuery] = useState("");
   const [emojiMenuOpen, setEmojiMenuOpen] = useState(false);
   const [tenorMenuOpen, setTenorMenuOpen] = useState(false);
+  const [recordingVoice, setRecordingVoice] = useState(false);
 
   const emojiQueryDeferred = useDeferredValue(emojiQuery);
   const mentionQueryDeferred = useDeferredValue(mentionQuery);
@@ -155,6 +175,10 @@ export default function ChatInput({
     if (setBoundText) {
       setBoundText(text);
     }
+
+    return () => {
+      handleStopRecordVoice();
+    };
   }, []);
 
   const decorate = useCallback(
@@ -1542,6 +1566,7 @@ export default function ChatInput({
     [chatFontScale, underlineLinks, convertEmoticon]
   );
 
+  const callContext = useContext(CallContext);
   const handleUploadFile = useCallback(() => {
     if (attachments?.length && attachments.length >= 10) {
       ModalUtils.openGenericModal(
@@ -1563,6 +1588,151 @@ export default function ChatInput({
         <PollForm currentChatRoom={currentChatRoom} />
       );
   }, [currentChatRoom]);
+
+  const voiceRecorderRef = useRef<any>(null);
+  const voiceRecorderTimer = useRef<NodeJS.Timeout | null>(null);
+  const voiceRecorderStopTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  const [voiceRecorderHasSound, setVoiceRecorderHasSound] = useState(false);
+  const [voiceRecorderTime, setVoiceRecorderTime] = useState("");
+  const handleStopRecordVoice = useCallback(async () => {
+    if (voiceRecorderRef.current) {
+      voiceRecorderRef.current.stop();
+      voiceRecorderRef.current = null;
+      document.getElementById("localRecordStream")?.remove();
+      setRecordingVoice(false);
+    }
+    if (voiceRecorderStopTimeout.current) {
+      clearTimeout(voiceRecorderStopTimeout.current);
+    }
+    if (voiceRecorderTimer.current) {
+      clearInterval(voiceRecorderTimer.current);
+    }
+  }, []);
+
+  const handleRecordVoice = useCallback(async () => {
+    if (recordingVoice) {
+      return;
+    }
+    try {
+      let audioStream: MediaStream | null = null;
+      try {
+        if (!callContext?.selectedDevice.audioUserInputDevice) {
+          throw new Error(
+            "No selected device found for recording; fallback to default device."
+          );
+        }
+        audioStream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            deviceId: {
+              exact: callContext?.selectedDevice.audioUserInputDevice,
+            },
+          },
+        });
+      } catch (err) {
+        //fallback to default device
+        console.error(err);
+        audioStream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+        });
+      }
+
+      audioStream = GenericUtil.createPreprocessedAudioStream(audioStream);
+
+      const activeAudioChannel = document.getElementById("activeAudioChannel");
+
+      if (!activeAudioChannel) {
+        throw new Error("Unexpected error while recording voice");
+      }
+
+      const audioElement = document.createElement("audio");
+      audioElement.muted = true;
+      audioElement.srcObject = audioStream;
+      audioElement.id = "localRecordStream";
+
+      activeAudioChannel.appendChild(audioElement);
+
+      SoundUtil.monitorSoundActivity(audioStream, audioElement, (hasSound) => {
+        setVoiceRecorderHasSound(hasSound);
+      });
+
+      const mod = await import("mp3-mediarecorder");
+
+      console.log(import.meta.url);
+      const recorder = new mod.Mp3MediaRecorder(audioStream, {
+        worker: new Worker(new URL("../workers/worker.js", import.meta.url)),
+      });
+      voiceRecorderRef.current = recorder;
+      const audioChunks: Blob[] = [];
+
+      recorder.ondataavailable = (event) => {
+        console.log(event.data.size);
+        if (event.data.size) {
+          audioChunks.push(event.data);
+        }
+      };
+
+      recorder.onstop = () => {
+        setRecordingVoice(false);
+        const blob = new Blob(audioChunks, {
+          type: "audio/mp3",
+        });
+
+        const file = new File([blob], "voicemail.mp3", {
+          type: "audio/mp3",
+          lastModified: Date.now(),
+        });
+
+        if (handleAttachFile) handleAttachFile(file);
+
+        audioStream.getTracks().forEach((track) => track.stop());
+      };
+
+      recorder.start();
+      setRecordingVoice(true);
+
+      const startTime = Date.now();
+
+      voiceRecorderTimer.current = setInterval(() => {
+        const diff = Date.now() - startTime;
+
+        const displayDate = new Date(diff);
+        setVoiceRecorderTime(
+          diff >= 3600 * 1000
+            ? format(displayDate, "H:mm:ss")
+            : format(displayDate, "mm:ss")
+        );
+      }, 1000);
+
+      const diff = Date.now() - startTime;
+
+      const displayDate = new Date(diff);
+      setVoiceRecorderTime(
+        diff >= 3600 * 1000
+          ? format(displayDate, "H:mm:ss")
+          : format(displayDate, "mm:ss")
+      );
+
+      //maximum 10 seconds
+      await new Promise((resolve) => {
+        voiceRecorderStopTimeout.current = setTimeout(
+          () => resolve(true),
+          10000
+        );
+      });
+
+      if (voiceRecorderRef.current) {
+        handleStopRecordVoice();
+      }
+    } catch (err) {
+      console.error(err);
+      ModalUtils.openGenericModal(
+        modalContext,
+        "Oof.",
+        "Failed to record voice message; No permission!"
+      );
+    }
+  }, [recordingVoice]);
 
   const menus = useMemo(() => {
     const items = [
@@ -1635,13 +1805,18 @@ export default function ChatInput({
     };
   }, [typing, handleSendTypeEvent]);
 
+  const isLightMode = useIsLightMode();
+
   return (
     <div
       id="chatInput"
       ref={setChatInputRef}
-      className={`w-[96%] ${
-        absolutePosition ? "absolute flex items-center gap-2 bottom-[1rem]" : ""
-      }
+      className={`
+        w-[96%] ${
+          absolutePosition
+            ? "absolute flex items-center gap-2 bottom-[1rem]"
+            : ""
+        }
 }
         `}
     >
@@ -1654,7 +1829,12 @@ export default function ChatInput({
       ) : (
         <></>
       )}
-      <div className="flex items-start p-2 w-full bg-lime-600 rounded-md">
+      <div
+        className="flex items-start p-2 w-full bg-lime-600 rounded-md transition-all"
+        style={{
+          boxShadow: recordingVoice ? "0 0rem 2rem red" : "",
+        }}
+      >
         {showMoreButton && (
           <Popover
             containerStyle={{
@@ -1676,6 +1856,28 @@ export default function ChatInput({
               <FaPlus />
             </div>
           </Popover>
+        )}
+
+        {recordingVoice && (
+          <div className="animate-fadeInUp w-full text-lime-400 flex items-center gap-1 justify-center h-full px-2">
+            <p className="mt-0.5">
+              Speak.. {"(" + voiceInputMode + ") "}
+              <span className="text-white px-1"> {voiceRecorderTime}</span>
+            </p>
+            {voiceRecorderHasSound ? (
+              <ScaleLoader
+                color={isLightMode ? "rgb(132,204,22)" : "rgb(163,230,53)"}
+                height={16}
+                speedMultiplier={1.25}
+              />
+            ) : (
+              <ScaleLoader
+                color={isLightMode ? "rgb(132,204,22)" : "rgb(163,230,53)"}
+                height={16}
+                speedMultiplier={0.000001}
+              />
+            )}
+          </div>
         )}
 
         <Popover
@@ -1709,8 +1911,10 @@ export default function ChatInput({
           positions={["top"]}
         >
           <div
-            className="bg-lime-600 float-left ml-4 text-lime-300 placeholder:text-lime-300 hover:bg-opacity-70 focus:bg-opacity-70 transition duration-500 focus:shadow-md
-                                focus:outline-none caret-lime-300 w-full self-center max-h-[20rem] overflow-x-hidden overflow-y-scroll"
+            className={`${
+              recordingVoice && "hidden"
+            } bg-lime-600 float-left ml-4 text-lime-300 placeholder:text-lime-300 hover:bg-opacity-70 focus:bg-opacity-70 transition duration-500 focus:shadow-md
+                                focus:outline-none caret-lime-300 w-full self-center max-h-[20rem] overflow-x-hidden overflow-y-scroll`}
           >
             <Slate
               editor={editor}
@@ -1744,6 +1948,9 @@ export default function ChatInput({
                   if (e.key === "Enter" && !e.shiftKey && handleSendMessage) {
                     e.preventDefault();
 
+                    if (recordingVoice) {
+                      return;
+                    }
                     handleSendMessage(editor);
 
                     setOpenSearchView("");
@@ -1801,88 +2008,124 @@ export default function ChatInput({
           </p>
         </div>
 
-        <Popover
-          containerStyle={{
-            zIndex: emojiZIndex?.toString() ?? "50",
-          }}
-          onClickOutside={() => setEmojiMenuOpen(false)}
-          reposition={true}
-          isOpen={emojiMenuOpen}
-          positions={["top", "bottom"]}
-          content={
-            <div className="mb-2 overflow-y-scroll">
-              <div className="w-full h-full sm:hidden">
-                <EmojiPicker perLine={7} onEmojiSelect={handleEmojiSelect} />
-              </div>
-              <div className="w-full h-full hidden sm:block">
-                <EmojiPicker onEmojiSelect={handleEmojiSelect} />
-              </div>
-            </div>
-          }
-        >
-          <div
-            onClick={() => setEmojiMenuOpen((prev) => !prev)}
-            className="group self-start rounded-full whitespace-nowrap scale-100 hover:scale-125 bg-lime-400 text-lime-600 hover:text-lime-700 cursor-pointer transition"
-          >
-            <div className="block group-hover:hidden">
-              <BsEmojiExpressionless size={28} />
-            </div>
-            <div className="hidden group-hover:block">
-              <BsEmojiSmile size={28} />
-            </div>
-          </div>
-        </Popover>
-
-        {showGifMenu ? (
+        <div className="flex max-w-[2.8rem] overflow-x-scroll sm:max-w-none sm:overflow-x-visible">
           <Popover
             containerStyle={{
-              zIndex: "50",
+              zIndex: emojiZIndex?.toString() ?? "50",
             }}
-            onClickOutside={() => setTenorMenuOpen(false)}
+            onClickOutside={() => setEmojiMenuOpen(false)}
             reposition={true}
-            isOpen={tenorMenuOpen}
+            isOpen={emojiMenuOpen}
             positions={["top", "bottom"]}
             content={
-              <div className="animate-fadeInUpFaster max-w-[90vw] md:max-w-[50vw] bg-lime-700 rounded-md">
-                <TenorPicker
-                  onGifSelected={(url) => {
-                    editor.children = [
-                      {
-                        type: "paragraph",
-                        children: [
-                          {
-                            text: url,
-                          },
-                        ],
-                      },
-                    ];
-
-                    if (handleSendMessage) handleSendMessage(editor);
-
-                    setTenorMenuOpen(false);
-                  }}
-                />
+              <div className="mb-2 overflow-y-scroll">
+                <div className="w-full h-full sm:hidden">
+                  <EmojiPicker perLine={7} onEmojiSelect={handleEmojiSelect} />
+                </div>
+                <div className="w-full h-full hidden sm:block">
+                  <EmojiPicker onEmojiSelect={handleEmojiSelect} />
+                </div>
               </div>
             }
           >
             <div
-              onClick={() => setTenorMenuOpen((prev) => !prev)}
-              className="ml-2 bg-transparent group self-start whitespace-nowrap scale-100 hover:scale-125 text-lime-300 hover:text-lime-400 cursor-pointer transition"
+              onClick={() => setEmojiMenuOpen((prev) => !prev)}
+              className="group self-start rounded-full whitespace-nowrap scale-100 hover:scale-125 bg-lime-400 text-lime-600 hover:text-lime-700 cursor-pointer transition"
             >
               <div className="block group-hover:hidden">
-                <MdOutlineGifBox size={30} />
+                <BsEmojiExpressionless size={28} />
               </div>
               <div className="hidden group-hover:block">
-                <MdGifBox size={30} />
+                <BsEmojiSmile size={28} />
               </div>
             </div>
           </Popover>
-        ) : (
-          <></>
-        )}
+
+          {showGifMenu ? (
+            <Popover
+              containerStyle={{
+                zIndex: "50",
+              }}
+              onClickOutside={() => setTenorMenuOpen(false)}
+              reposition={true}
+              isOpen={tenorMenuOpen}
+              positions={["top", "bottom"]}
+              content={
+                <div className="animate-fadeInUpFaster max-w-[90vw] md:max-w-[50vw] bg-lime-700 rounded-md">
+                  <TenorPicker
+                    onGifSelected={(url) => {
+                      editor.children = [
+                        {
+                          type: "paragraph",
+                          children: [
+                            {
+                              text: url,
+                            },
+                          ],
+                        },
+                      ];
+
+                      if (handleSendMessage) handleSendMessage(editor);
+
+                      setTenorMenuOpen(false);
+                    }}
+                  />
+                </div>
+              }
+            >
+              <div
+                onClick={() => setTenorMenuOpen((prev) => !prev)}
+                className="ml-2 bg-transparent group self-start whitespace-nowrap scale-100 hover:scale-125 text-lime-300 hover:text-lime-400 cursor-pointer transition"
+              >
+                <div className="block group-hover:hidden">
+                  <MdOutlineGifBox size={30} />
+                </div>
+                <div className="hidden group-hover:block">
+                  <MdGifBox size={30} />
+                </div>
+              </div>
+            </Popover>
+          ) : (
+            <></>
+          )}
+
+          {showVoiceMessage && (
+            <div
+              onClick={() => {
+                if (recordingVoice) {
+                  handleStopRecordVoice();
+                } else {
+                  handleRecordVoice();
+                }
+              }}
+              className="ml-2 bg-transparent group self-start whitespace-nowrap scale-100 hover:scale-125 text-lime-300 hover:text-lime-400 cursor-pointer transition"
+            >
+              {recordingVoice ? (
+                <>
+                  <div className="block group-hover:hidden">
+                    <FaStop size={30} color="red" />
+                  </div>
+                  <div className="hidden group-hover:block">
+                    <FaStop size={30} color="red" />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="block group-hover:hidden">
+                    <MdOutlineKeyboardVoice size={30} />
+                  </div>
+                  <div className="hidden group-hover:block">
+                    <MdKeyboardVoice size={30} />
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+        </div>
       </div>
       {showSendButton && (
         <PrimaryButton
+          disabled={recordingVoice}
           customWidth="w-fit"
           customHeight="h-10"
           customStyles="bg-lime-500 text-white px-2 md:px-4 lg:px-8"

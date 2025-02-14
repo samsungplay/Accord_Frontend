@@ -221,6 +221,7 @@ const monitorSoundActivity = (
       if (audioContext.state !== "closed") {
         audioContext.close();
       }
+
       return;
     }
     const dataArray = new Uint8Array(analyzer.frequencyBinCount);
@@ -228,9 +229,15 @@ const monitorSoundActivity = (
 
     const avgFrequency =
       dataArray.reduce((sum, value) => sum + value, 0) / dataArray.length;
-    // console.log("testing: ", avgFrequency, audioContext.state);
 
-    const hasSound = avgFrequency > 0;
+    let frequencyThreshold =
+      window.inputMode === "Push to Talk"
+        ? 0
+        : (255 * (window.inputSensitivityScale ?? 10.0)) / 100.0;
+    if (window.inputMode === "Push to Talk" && window.shouldMaskAudioStream) {
+      frequencyThreshold = 1000000;
+    }
+    const hasSound = avgFrequency > frequencyThreshold;
 
     if (!hasSound && mediaElement.id === "localAudioStream") {
       silentTick += 1;
@@ -248,7 +255,11 @@ const monitorSoundActivity = (
     if (hasSound !== lastHasSound) {
       onSoundActivityChange(hasSound);
 
-      if (!mediaElement.muted && mediaElement.id !== "localAudioStream") {
+      if (
+        !mediaElement.muted &&
+        mediaElement.id !== "localAudioStream" &&
+        mediaElement.id !== "localRecordStream"
+      ) {
         if (hasSound) {
           const lastSpeakersCount = (window.speakers ?? new Set()).size;
           //handle stream attenuation
