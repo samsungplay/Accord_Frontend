@@ -57,6 +57,7 @@ import {
   MdKeyboardVoice,
   MdOutlineGifBox,
   MdOutlineKeyboardVoice,
+  MdScheduleSend,
 } from "react-icons/md";
 import GenericUtil from "../util/GenericUtil";
 import api from "../api/api";
@@ -66,14 +67,23 @@ import useIsLightMode from "../hooks/useIsLightMode";
 import SoundUtil from "../util/SoundUtil";
 
 import { format } from "date-fns";
-import dynamic from "next/dynamic";
+
+import MessageScheduler from "./MessageScheduler";
+import { FaClockRotateLeft } from "react-icons/fa6";
+import ScheduledMessageManager from "./ScheduledMessageManager";
+import { useQuery } from "@tanstack/react-query";
+import { ChatRecordType } from "../types/ChatRecordType";
 
 type ChatInputType = {
   setChatInputRef?: Dispatch<SetStateAction<HTMLDivElement | null>>;
   emojiSearchViewWidth: number;
   currentChatRoom?: ChatRoom;
   currentUser: User;
-  handleSendMessage?: (editor: Editor) => void;
+  handleSendMessage?: (
+    editor: Editor,
+    plainText?: string,
+    scheduledTime?: number
+  ) => void;
   absolutePosition?: boolean;
   initialValue?: Descendant[];
   showMoreButton?: boolean;
@@ -145,6 +155,8 @@ export default function ChatInput({
   const editorText = useDeferredValue(editorText_);
 
   const modalContext = useContext(ModalContext);
+
+  const [messageScheduler, setMessageScheduler] = useState(0);
 
   useEffect(() => {
     editor.onChange();
@@ -1610,6 +1622,54 @@ export default function ChatInput({
     }
   }, []);
 
+  const scheduledMessages = useQuery({
+    queryKey: ["scheduled_messages", currentChatRoom?.id.toString()],
+    queryFn: async () => {
+      const response = await api.get<ChatRecordType[]>(
+        `/chat/message/scheduled/${currentChatRoom?.id}`
+      );
+      return {
+        data: response.data,
+      };
+    },
+    refetchOnMount: false,
+  });
+
+  const handleScheduleMessage = useCallback(() => {
+    ModalUtils.openCustomModal(
+      modalContext,
+      <MessageScheduler setMessageScheduler={setMessageScheduler} />,
+      true
+    );
+  }, []);
+
+  const handleManageScheduleMessages = useCallback(() => {
+    if (currentChatRoom)
+      ModalUtils.openGenericModal(
+        modalContext,
+        "",
+        "",
+        undefined,
+        <ScheduledMessageManager currentChatRoom={currentChatRoom} />,
+        undefined,
+        <div className="flex justify-center items-center gap-2">
+          <FaClockRotateLeft /> View Scheduled Messages
+        </div>,
+        true
+      );
+  }, [currentChatRoom]);
+
+  useEffect(() => {
+    if (handleSendMessage && messageScheduler > 0) {
+      handleSendMessage(editor, undefined, messageScheduler);
+      setMessageScheduler(0);
+      setEditorText("");
+      if (setBoundText) {
+        setBoundText("");
+      }
+    }
+  }, [messageScheduler, editor]);
+
   const handleRecordVoice = useCallback(async () => {
     if (recordingVoice) {
       return;
@@ -1770,8 +1830,37 @@ export default function ChatInput({
       </div>
     );
 
+    if (editorText.length > 0 || attachments?.length)
+      items.push(
+        <div
+          key={2}
+          onClick={() => handleScheduleMessage()}
+          className="flex gap-2 sm:p-1 items-center"
+        >
+          <MdScheduleSend />
+          Schedule This Message
+        </div>
+      );
+
+    items.push(
+      <div
+        key={3}
+        onClick={() => handleManageScheduleMessages()}
+        className="flex gap-2 sm:p-1 items-center"
+      >
+        <FaClockRotateLeft />
+        View Scheduled Messages
+        {scheduledMessages.data?.data &&
+          scheduledMessages.data.data.length > 0 && (
+            <div className="w-3 h-3 grid place-content-center rounded-full p-2 text-white bg-red-500 text-sm">
+              {scheduledMessages.data?.data.length}
+            </div>
+          )}
+      </div>
+    );
+
     return items;
-  }, [editorText]);
+  }, [editorText, attachments, scheduledMessages.data?.data]);
 
   const [typing, setTyping] = useState(false);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -1851,9 +1940,15 @@ export default function ChatInput({
           >
             <div
               onClick={() => setChatMenuOpen((prev) => !prev)}
-              className="self-start rounded-full whitespace-nowrap p-2 bg-lime-400 text-lime-500 hover:text-lime-700 cursor-pointer transition"
+              className="relative self-start rounded-full whitespace-nowrap p-2 bg-lime-400 text-lime-500 hover:text-lime-700 cursor-pointer transition"
             >
               <FaPlus />
+              {scheduledMessages.data?.data &&
+                scheduledMessages.data.data.length > 0 && (
+                  <div className="bottom-[-10%] right-[-10%] absolute w-3 h-3 grid place-content-center rounded-full p-2 text-white bg-red-500 text-sm">
+                    {scheduledMessages.data?.data.length}
+                  </div>
+                )}
             </div>
           </Popover>
         )}

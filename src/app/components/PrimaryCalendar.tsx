@@ -1,24 +1,25 @@
 import { format } from "date-fns";
 import React, { Dispatch, SetStateAction } from "react";
-import Calendar, { OnClickFunc } from "react-calendar";
+import Calendar, { OnClickFunc, TileDisabledFunc } from "react-calendar";
 import { GrLinkNext, GrLinkPrevious } from "react-icons/gr";
 type PrimaryCalendarType = {
   onClickDay?: OnClickFunc;
   onClickYear?: OnClickFunc;
   setMonthName?: Dispatch<SetStateAction<string>>;
+  customTileDisabled?: TileDisabledFunc;
 };
 export default function PrimaryCalendar({
   onClickDay,
   onClickYear,
   setMonthName,
+  customTileDisabled = ({ date }) => {
+    const now = Date.now();
+    return date.getTime() > now;
+  },
 }: PrimaryCalendarType) {
   return (
     <Calendar
-      tileDisabled={({ date }) => {
-        const now = new Date().getTime();
-
-        return date.getTime() > now;
-      }}
+      tileDisabled={customTileDisabled}
       maxDetail="month"
       minDetail="year"
       locale="en-US"

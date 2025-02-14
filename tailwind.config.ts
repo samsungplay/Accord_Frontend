@@ -256,6 +256,14 @@ const config: Config = {
           "0%": { opacity: "1.0", transform: "translateY(0rem)" },
           "100%": { opacity: "0.0", transform: "translateY(1rem)" },
         },
+        fadeInAndLeft: {
+          "0%": { opacity: "0.0", transform: "translateX(1rem)" },
+          "100%": { opacity: "1.0", transform: "translateX(0rem)" },
+        },
+        fadeInAndRight: {
+          "0%": { opacity: "0.0", transform: "translateX(-1rem)" },
+          "100%": { opacity: "1.0", transform: "translateX(0rem)" },
+        },
 
         jiggle: {
           "0%": { transform: "translateX(0)" },
@@ -369,6 +377,9 @@ const config: Config = {
         popOut: "popOut 0.1s ease-in-out forwards",
         spinClockwise: "spinClockwise 0.5s ease-in-out forwards",
         fadeInDown: "fadeInAndDown 0.5s ease-in-out",
+        fadeInLeft: "fadeInAndLeft 0.5s ease-in-out",
+        fadeInRight: "fadeInAndRight 0.5s ease-in-out",
+
         loadingScreenIcon:
           "loadingScreenIcon 3.0s ease-in-out infinite alternate",
         popIn: "popIn 0.3s ease-in-out forwards",

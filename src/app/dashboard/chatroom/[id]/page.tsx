@@ -27,7 +27,7 @@ import {
 } from "react";
 
 import { FaFeather, FaReply, FaSearch } from "react-icons/fa";
-import { FaGear, FaX } from "react-icons/fa6";
+import { FaClockRotateLeft, FaGear, FaX } from "react-icons/fa6";
 import { IoMdPeople, IoMdVideocam } from "react-icons/io";
 import { IoCall, IoReturnUpForward } from "react-icons/io5";
 import React from "react";
@@ -82,6 +82,7 @@ import { GiHand } from "react-icons/gi";
 import Usercard from "@/app/components/Usercard";
 import { useDebounceValue, useWindowSize } from "usehooks-ts";
 import DefaultProfileIcon from "@/app/components/DefaultProfileIcon";
+import ScheduledMessageManager from "@/app/components/ScheduledMessageManager";
 
 export default function ChatroomPage() {
   // useLayoutEffect(() => {
@@ -172,6 +173,29 @@ export default function ChatroomPage() {
       handleStartCall(true);
     }
   }, [pageQuery]);
+
+  useEffect(() => {
+    //auto clear outdated scheduled messages
+    const interval = setInterval(() => {
+      queryClient.setQueryData(
+        ["scheduled_messages", params.id],
+        (prev: { data: ChatRecordType[] }) => {
+          if (!prev) {
+            return prev;
+          }
+          return {
+            data: prev.data.filter(
+              (e) => sub(e.date, {}).getTime() > Date.now()
+            ),
+          };
+        }
+      );
+    }, 60000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
   const params = useParams<{ id: string }>();
 
   const userSettings = useQuery({
@@ -767,6 +791,19 @@ export default function ChatroomPage() {
     queryKey: ["friends"],
     queryFn: async () => {
       const response = await api.get<User[]>("/users/friends");
+      return {
+        data: response.data,
+      };
+    },
+    refetchOnMount: false,
+  });
+
+  useQuery({
+    queryKey: ["scheduled_messages", params.id],
+    queryFn: async () => {
+      const response = await api.get<ChatRecordType[]>(
+        `/chat/message/scheduled/${params.id}`
+      );
       return {
         data: response.data,
       };
@@ -2180,12 +2217,14 @@ export default function ChatroomPage() {
       replyTarget,
       attachments,
       attachmentsMetadata,
+      scheduledTime,
     }: {
       message: string;
-      pending: ChatRecordType;
+      pending?: ChatRecordType;
       replyTarget: ChatRecordType | undefined;
       attachments: { file: File; spoiler: boolean }[] | null;
       attachmentsMetadata: string;
+      scheduledTime?: number;
     }) => {
       if (attachments?.length && attachmentsMetadata.length > 0) {
         const formData: FormData = new FormData();
@@ -2222,6 +2261,10 @@ export default function ChatroomPage() {
           formData.append("attachments", attachment.file);
         });
 
+        if (scheduledTime) {
+          formData.set("scheduledTime", scheduledTime.toString());
+        }
+
         return api.post(
           `/chat/message/attachments/${currentChatRoom?.id || -1}`,
           formData,
@@ -2232,7 +2275,7 @@ export default function ChatroomPage() {
             onUploadProgress(progressEvent) {
               setPendingMessages((prev) =>
                 prev.map((pending_) => {
-                  if (pending_.id === pending.id) {
+                  if (pending && pending_.id === pending.id) {
                     pending.clientAttachmentUploadProgress =
                       progressEvent.progress;
                   }
@@ -2260,6 +2303,7 @@ export default function ChatroomPage() {
           replyTargetSenderId:
             replyTarget && replyTarget.sender ? replyTarget.sender.id : null,
           replyTargetMessage: replyTargetMessage,
+          scheduledTime: scheduledTime ?? null,
         });
       }
     },
@@ -2267,6 +2311,33 @@ export default function ChatroomPage() {
       if (!data) return;
 
       if (data?.status === 200) {
+        if (variables.scheduledTime) {
+          queryClient.setQueryData(
+            ["scheduled_messages", params.id],
+            (prev: { data: ChatRecordType[] }) => {
+              if (!prev) {
+                return prev;
+              }
+              return {
+                data: [...prev.data, data.data],
+              };
+            }
+          );
+          if (currentChatRoom)
+            ModalUtils.openGenericModal(
+              modalContext,
+              "",
+              "",
+              undefined,
+              <ScheduledMessageManager currentChatRoom={currentChatRoom} />,
+              undefined,
+              <div className="flex justify-center items-center gap-2">
+                <FaClockRotateLeft /> View Scheduled Messages
+              </div>,
+              true
+            );
+          return;
+        }
         if (currentChatRoom) {
           queryClient.setQueryData(
             ["chatroom_dm"],
@@ -2300,8 +2371,9 @@ export default function ChatroomPage() {
             //         }
             // },10)
             await batchResetQuery();
+
             setPendingMessages((prev) =>
-              prev.filter((e) => e.id !== variables.pending.id)
+              prev.filter((e) => e.id !== variables.pending?.id)
             );
 
             return;
@@ -2355,14 +2427,14 @@ export default function ChatroomPage() {
           );
 
           setPendingMessages((prev) =>
-            prev.filter((e) => e.id !== variables.pending.id)
+            prev.filter((e) => e.id !== variables.pending?.id)
           );
         }
 
         handleReadAllMessages();
       } else {
         setPendingMessages((prev) =>
-          prev.filter((e) => e.id !== variables.pending.id)
+          prev.filter((e) => e.id !== variables.pending?.id)
         );
         ModalUtils.handleGenericError(modalContext, data);
       }
@@ -2426,7 +2498,7 @@ export default function ChatroomPage() {
   );
 
   const handleSendMessage = useCallback(
-    async (editor?: Editor, plainText?: string) => {
+    async (editor?: Editor, plainText?: string, scheduledTime?: number) => {
       await new Promise((resolve) => setTimeout(() => resolve(true), 50));
 
       let text = editor ? getText(editor) : plainText ?? "";
@@ -2522,30 +2594,33 @@ export default function ChatroomPage() {
       }
 
       //optimistic update - add new pending message
-      const id = pendingId.current;
-      pendingId.current++;
-      const newPendingMessage: ChatRecordType = {
-        sender: currentUser,
-        date: new Date(),
-        id: id,
-        type: "pending_text",
-        message: text,
-        edited: false,
-        chatReactions: [],
-        pollVotes: [],
-        replyTargetId: replyTarget?.id,
-        replyTargetMessage: replyTarget?.message,
-        replyTargetSender: replyTarget?.sender ?? undefined,
-        attachments: attachmentCode.length > 0 ? attachmentCode : undefined,
-        attachmentsMetadata:
-          attachmentsMetadata.length > 0 ? attachmentsMetadata : undefined,
-        clientAttachmentUploadProgress:
-          attachmentCode.length > 0 ? 0 : undefined,
-        pinned: false,
-      };
+      let newPendingMessage: ChatRecordType | undefined = undefined;
+      if (!scheduledTime) {
+        const id = pendingId.current;
+        pendingId.current++;
+        newPendingMessage = {
+          sender: currentUser,
+          date: new Date(),
+          id: id,
+          type: "pending_text",
+          message: text,
+          edited: false,
+          chatReactions: [],
+          pollVotes: [],
+          replyTargetId: replyTarget?.id,
+          replyTargetMessage: replyTarget?.message,
+          replyTargetSender: replyTarget?.sender ?? undefined,
+          attachments: attachmentCode.length > 0 ? attachmentCode : undefined,
+          attachmentsMetadata:
+            attachmentsMetadata.length > 0 ? attachmentsMetadata : undefined,
+          clientAttachmentUploadProgress:
+            attachmentCode.length > 0 ? 0 : undefined,
+          pinned: false,
+        };
 
-      //add new pending message
-      setPendingMessages((prev) => [newPendingMessage, ...prev]);
+        //add new pending message
+        setPendingMessages((prev) => [newPendingMessage!, ...prev]);
+      }
 
       if (
         chatRecords.data &&
@@ -2562,6 +2637,7 @@ export default function ChatroomPage() {
         replyTarget: replyTarget,
         attachments: attachments ? [...attachments] : null,
         attachmentsMetadata: attachmentsMetadata.trim(),
+        scheduledTime,
       });
 
       if (fileUploaderRef.current) fileUploaderRef.current.value = "";
