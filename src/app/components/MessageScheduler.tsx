@@ -29,22 +29,34 @@ export default function MessageScheduler({
   setMessageScheduler,
   rescheduleTarget,
   currentChatRoom,
+  timeFormat = "12-hour",
 }: {
   setMessageScheduler?: Dispatch<SetStateAction<number>>;
   rescheduleTarget?: ChatRecordType;
   currentChatRoom?: ChatRoom;
+  timeFormat?: string;
 }) {
   const modalContext = useContext(ModalContext);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const hours = useMemo(() => {
-    const values = new Array(12).fill(0).map((e, i) => {
-      const string = (i + 1).toString();
-      if (string.length === 2) return string;
-      else return "0" + string;
-    });
+    if (timeFormat === "12-hour") {
+      const values = new Array(12).fill(0).map((e, i) => {
+        const string = (i + 1).toString();
+        if (string.length === 2) return string;
+        else return "0" + string;
+      });
 
-    return values;
-  }, []);
+      return values;
+    } else {
+      const values = new Array(24).fill(0).map((e, i) => {
+        const string = i.toString();
+        if (string.length === 2) return string;
+        else return "0" + string;
+      });
+
+      return values;
+    }
+  }, [timeFormat]);
   const minutes = useMemo(() => {
     return new Array(60).fill(0).map((e, i) => {
       const string = i.toString();
@@ -92,7 +104,10 @@ export default function MessageScheduler({
             "",
             "",
             undefined,
-            <ScheduledMessageManager currentChatRoom={currentChatRoom} />,
+            <ScheduledMessageManager
+              currentChatRoom={currentChatRoom}
+              timeFormat={localStorage.getItem("timeFormat") ?? "12-hour"}
+            />,
             undefined,
             <div className="flex justify-center items-center gap-2">
               <FaClockRotateLeft /> View Scheduled Messages
@@ -107,7 +122,10 @@ export default function MessageScheduler({
   useEffect(() => {
     const now = new Date();
     if (selectedDate) {
-      const currentHour = document.getElementById("hour-" + format(now, "hh"));
+      const currentHour = document.getElementById(
+        "hour-" +
+          (timeFormat === "12-hour" ? format(now, "hh") : format(now, "HH"))
+      );
       const currentMinute = document.getElementById(
         "minute-" + format(now, "mm")
       );
@@ -116,6 +134,7 @@ export default function MessageScheduler({
       );
 
       if (currentHour && currentMinute && currentMeridiem) {
+        console.log("hmm?");
         currentHour.scrollIntoView({
           block: "start",
           behavior: "smooth",
@@ -124,13 +143,20 @@ export default function MessageScheduler({
           block: "start",
           behavior: "smooth",
         });
-        currentMeridiem.scrollIntoView({
-          block: "start",
-          behavior: "smooth",
-        });
+        if (timeFormat === "12-hour")
+          currentMeridiem.scrollIntoView({
+            block: "start",
+            behavior: "smooth",
+          });
       }
+
+      setSelectedTime({
+        hour: parseInt(format(now, "h")),
+        minute: parseInt(format(now, "m")),
+        amPm: format(now, "a"),
+      });
     }
-  }, [selectedDate]);
+  }, [selectedDate, timeFormat]);
   const [selectedTime, setSelectedTime] = useState<{
     hour: number;
     minute: number;
@@ -161,12 +187,38 @@ export default function MessageScheduler({
                 : parseInt(content),
             }));
           } else if (entries[0].target.className.includes("hour")) {
-            setSelectedTime((prev) => ({
-              ...prev,
-              hour: content.startsWith("0")
-                ? parseInt(content.substring(1))
-                : parseInt(content),
-            }));
+            let hourValue = content.startsWith("0")
+              ? parseInt(content.substring(1))
+              : parseInt(content);
+            if (timeFormat === "24-hour") {
+              if (hourValue > 12) {
+                hourValue -= 12;
+                setSelectedTime((prev) => ({
+                  ...prev,
+                  hour: hourValue,
+                  amPm: "PM",
+                }));
+              } else if (hourValue === 0) {
+                setSelectedTime((prev) => ({
+                  ...prev,
+                  hour: 12,
+                  amPm: "AM",
+                }));
+              } else {
+                setSelectedTime((prev) => ({
+                  ...prev,
+                  hour: hourValue,
+                  amPm: "AM",
+                }));
+              }
+            } else {
+              setSelectedTime((prev) => ({
+                ...prev,
+                hour: content.startsWith("0")
+                  ? parseInt(content.substring(1))
+                  : parseInt(content),
+              }));
+            }
           } else if (entries[0].target.className.includes("amPm")) {
             setSelectedTime((prev) => ({
               ...prev,
@@ -175,7 +227,7 @@ export default function MessageScheduler({
           }
         }
       },
-      { threshold: 0.9 }
+      { threshold: 0.8 }
     );
 
     if (hours && minutes && amPm) {
@@ -221,6 +273,7 @@ export default function MessageScheduler({
 
   const parsedDateDeferred = useDeferredValue(parsedDate);
   useEffect(() => {
+    console.log(parsedDateDeferred);
     setOutdated(parsedDateDeferred.getTime() <= Date.now());
   }, [parsedDateDeferred]);
   const handleScheduleMessage = useCallback(() => {
@@ -321,7 +374,9 @@ export default function MessageScheduler({
 
               <div
                 id="amPmSelector"
-                className="no-scrollbar h-[3rem] shadow-lime-200 shadow-inner overflow-y-scroll snap-y snap-mandatory p-2 rounded-md"
+                className={`${
+                  timeFormat === "24-hour" && "hidden"
+                } no-scrollbar h-[3rem] shadow-lime-200 shadow-inner overflow-y-scroll snap-y snap-mandatory p-2 rounded-md`}
               >
                 <div
                   id="amPm-AM"

@@ -16,8 +16,10 @@ import MessageScheduler from "./MessageScheduler";
 import { MdCancelScheduleSend, MdSchedule } from "react-icons/md";
 export default function ScheduledMessageManager({
   currentChatRoom,
+  timeFormat = "12-hour",
 }: {
   currentChatRoom: ChatRoom;
+  timeFormat?: string;
 }) {
   const modalContext = useContext(ModalContext);
   const currentUser = useQuery({
@@ -121,7 +123,9 @@ export default function ScheduledMessageManager({
                 />
                 <p className="font-semibold text-lime-400">
                   {"Scheduled at: "}
-                  {format(sub(record.date, {}), "LLLL dd, yyyy hh:mm a")}
+                  {timeFormat === "12-hour"
+                    ? format(sub(record.date, {}), "LLLL dd, yyyy hh:mm a")
+                    : format(sub(record.date, {}), "LLLL dd, yyyy HH:mm")}
                 </p>
                 <div className="flex justify-center items-center gap-2">
                   <PrimaryButton

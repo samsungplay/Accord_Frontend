@@ -1638,7 +1638,10 @@ export default function ChatInput({
   const handleScheduleMessage = useCallback(() => {
     ModalUtils.openCustomModal(
       modalContext,
-      <MessageScheduler setMessageScheduler={setMessageScheduler} />,
+      <MessageScheduler
+        setMessageScheduler={setMessageScheduler}
+        timeFormat={localStorage.getItem("timeFormat") ?? "12-hour"}
+      />,
       true
     );
   }, []);
@@ -1650,7 +1653,10 @@ export default function ChatInput({
         "",
         "",
         undefined,
-        <ScheduledMessageManager currentChatRoom={currentChatRoom} />,
+        <ScheduledMessageManager
+          currentChatRoom={currentChatRoom}
+          timeFormat={localStorage.getItem("timeFormat") ?? "12-hour"}
+        />,
         undefined,
         <div className="flex justify-center items-center gap-2">
           <FaClockRotateLeft /> View Scheduled Messages

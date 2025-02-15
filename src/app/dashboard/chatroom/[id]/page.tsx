@@ -2329,7 +2329,10 @@ export default function ChatroomPage() {
               "",
               "",
               undefined,
-              <ScheduledMessageManager currentChatRoom={currentChatRoom} />,
+              <ScheduledMessageManager
+                currentChatRoom={currentChatRoom}
+                timeFormat={localStorage.getItem("timeFormat") ?? "12-hour"}
+              />,
               undefined,
               <div className="flex justify-center items-center gap-2">
                 <FaClockRotateLeft /> View Scheduled Messages
