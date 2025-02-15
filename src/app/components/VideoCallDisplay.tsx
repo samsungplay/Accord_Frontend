@@ -583,6 +583,38 @@ export default function VideoCallDisplay({
     }
   }, [secondaryVideoRef, viewSwapped]);
 
+  const [primaryVideoInverted, setPrimaryVideoInverted] = useState(false);
+  const [secondaryVideoInverted, setSecondaryVideoInverted] = useState(false);
+
+  //invert self-video
+  useEffect(() => {
+    if (!currentUser || user.id !== currentUser.id) {
+      return;
+    }
+    if (user.isVideoEnabled) {
+      if (user.isScreenShareEnabled !== "no") {
+        if (viewSwapped) {
+          setPrimaryVideoInverted(false);
+          setSecondaryVideoInverted(true);
+        } else {
+          setPrimaryVideoInverted(true);
+          setSecondaryVideoInverted(false);
+        }
+      } else {
+        setPrimaryVideoInverted(true);
+        setSecondaryVideoInverted(false);
+      }
+    } else {
+      setPrimaryVideoInverted(false);
+      setSecondaryVideoInverted(false);
+    }
+  }, [
+    user.isVideoEnabled,
+    user.isScreenShareEnabled,
+    currentUser?.id,
+    viewSwapped,
+  ]);
+
   const isLightMode = useIsLightMode();
   return (
     <div
@@ -869,7 +901,9 @@ export default function VideoCallDisplay({
             fullScreen
               ? "w-[100vw] max-h-[100vh] h-auto object-contain mt-[50vh] -translate-y-[50%]"
               : "w-full h-full max-h-[55vh] object-contain"
-          } rounded-md ${hiddenMode ? "hidden" : "block"}`}
+          } rounded-md ${hiddenMode ? "hidden" : "block"} ${
+            primaryVideoInverted && "-scale-x-100"
+          }`}
         ></video>
 
         {user.isVideoEnabled &&
@@ -885,9 +919,11 @@ export default function VideoCallDisplay({
               muted
               autoPlay
               controls={false}
-              className={`${
-                viewSwapped ? "animate-fadeIn" : "animate-fadeIn"
-              } absolute bottom-[0.25rem] right-[0.25rem] w-[30%] z-20 mt-4 bg-lime-700 aspect-video object-contain rounded-md`}
+              className={`
+                ${secondaryVideoInverted && "-scale-x-100"}
+                ${
+                  viewSwapped ? "animate-fadeIn" : "animate-fadeIn"
+                } absolute bottom-[0.25rem] right-[0.25rem] w-[30%] z-20 mt-4 bg-lime-700 aspect-video object-contain rounded-md`}
             ></video>
           )}
       </RightClickMenuWrapper>
