@@ -158,6 +158,7 @@ export default function ChatroomPage() {
       (localStorage.getItem("previewSyntax") ?? "yes") === "yes"
     );
 
+    setVoiceInputMode(localStorage.getItem("inputMode") ?? "Voice Activity");
     return () => {
       window.removeEventListener("storage", handler);
     };
