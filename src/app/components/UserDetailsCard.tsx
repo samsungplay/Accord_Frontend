@@ -469,11 +469,14 @@ export default function UserDetailsCard({
           <div className="p-4 flex flex-col overflow-y-scroll">
             {tab === "About Me" && (
               <div className="animate-fadeIn">
-                {userAboutMe.data?.data && userAboutMe.data.data.length > 0 && (
-                  <SimpleMarkdownTextView text={userAboutMe.data.data} />
-                )}
+                {user.id !== currentUser.data?.data.id &&
+                  userAboutMe.data?.data &&
+                  userAboutMe.data.data.length > 0 && (
+                    <SimpleMarkdownTextView text={userAboutMe.data.data} />
+                  )}
 
-                {currentUserAboutMe.data?.data &&
+                {user.id === currentUser.data?.data.id &&
+                  currentUserAboutMe.data?.data &&
                   currentUserAboutMe.data.data.length > 0 && (
                     <SimpleMarkdownTextView
                       text={currentUserAboutMe.data.data}
@@ -501,7 +504,7 @@ export default function UserDetailsCard({
                         }}
                       >
                         <ProfileAvatar
-                          user={user}
+                          user={mutualFriend}
                           size={GenericUtil.remToPx(2)}
                         />
                         {mutualFriend.nickname.length

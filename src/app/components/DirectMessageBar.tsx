@@ -441,7 +441,7 @@ export default function DirectMessageBar({
         ${
           hasIncomingCall
             ? "animate-[jiggle_0.3s_ease-in-out_infinite] bg-orange-500"
-            : pathname.startsWith(`/dashboard/chatroom/${chatroom.id}`)
+            : pathname === `/dashboard/chatroom/${chatroom.id}`
             ? "bg-lime-700 text-lime-300"
             : "text-lime-500"
         }  relative flex items-center rounded-md hover:text-lime-300 m-1 hover:bg-lime-700 transition cursor-pointer
