@@ -45,7 +45,7 @@ export default function Header({ children }: { children: React.ReactNode }) {
       {children}
 
       <div
-        className="group relative cursor-pointer text-lime-200 hover:text-lime-700 transition z-[10]"
+        className="group relative cursor-pointer text-lime-600 hover:text-lime-700 transition z-[10]"
         onClick={logout}
       >
         <IoIosLogOut size={24} />
