@@ -4165,6 +4165,7 @@ export default function ChatroomPage() {
                             }}
                             description="Start Voice Call"
                             backgroundColor="bg-transparent"
+                            customTextColor="text-lime-600"
                             direction="down"
                           >
                             <IoCall size={24} />
@@ -4182,6 +4183,7 @@ export default function ChatroomPage() {
                             }}
                             description="Start Video Call"
                             backgroundColor="bg-transparent"
+                            customTextColor="text-lime-600"
                             direction="down"
                           >
                             <IoMdVideocam size={24} />
@@ -4199,6 +4201,7 @@ export default function ChatroomPage() {
                                 : "Show Member List"
                             }`}
                             backgroundColor="bg-transparent"
+                            customTextColor="text-lime-600"
                             direction="down"
                           >
                             <IoMdPeople size={24} />
@@ -4252,6 +4255,7 @@ export default function ChatroomPage() {
                                   }}
                                   description="Manage Chatroom"
                                   backgroundColor="bg-transparent"
+                                  customTextColor="text-lime-600"
                                   direction="down"
                                 >
                                   <MdGroupAdd size={24} />
@@ -4287,6 +4291,7 @@ export default function ChatroomPage() {
                               description="Pinned"
                               backgroundColor="bg-transparent"
                               direction="down"
+                              customTextColor="text-lime-600"
                             >
                               <RiPushpinFill size={24} />
                             </FloatingButton>
@@ -4319,6 +4324,7 @@ export default function ChatroomPage() {
                                   description="Owner Settings"
                                   backgroundColor="bg-transparent"
                                   direction="down"
+                                  customTextColor="text-lime-600"
                                 >
                                   <FaGear size={24} />
                                 </FloatingButton>
@@ -4342,6 +4348,7 @@ export default function ChatroomPage() {
                       description="Search"
                       backgroundColor="bg-transparent"
                       direction="down"
+                      customTextColor="text-lime-600"
                     >
                       <div id="searchBarOpener">
                         <FaSearch size={20} />
