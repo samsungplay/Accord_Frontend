@@ -76,7 +76,7 @@ import GenericUtil from "../util/GenericUtil";
 import BackgroundPicker from "./BackgroundPicker";
 import useIsLightMode from "../hooks/useIsLightMode";
 import { ChatRoomRoleSettings } from "../types/ChatRoomRoleSettings";
-import { format } from "date-fns";
+import { format, formatDuration, intervalToDuration } from "date-fns";
 
 type SearchResultsOverlayType = {
   chatViewWidth: number;
@@ -882,7 +882,7 @@ export default function CallOverlay({
                       : undefined
                   }
                   setShortCodes={setEmojiBubbles}
-                  userIdKey={currentUser.id}
+                  userIdKey={participant.id}
                   duration={Number(
                     (emojiBubbles[participant.id] ?? "1000::").split("::")[0]
                   )}
@@ -1231,27 +1231,42 @@ export default function CallOverlay({
       if (chatroom.callInstance) {
         const callStartTime = chatroom.callInstance.createdAt;
 
-        const diff = Date.now() - callStartTime;
+        const duration = intervalToDuration({
+          start: new Date(callStartTime),
+          end: new Date(),
+        });
 
-        const displayDate = new Date(diff);
+        const hours = duration.hours || 0;
+        const minutes = duration.minutes || 0;
+        const seconds = duration.seconds || 0;
+
         setCallElapsedTime(
-          diff >= 3600 * 1000
-            ? format(displayDate, "H:mm:ss")
-            : format(displayDate, "mm:ss")
+          hours > 0
+            ? `${hours}:${String(minutes).padStart(2, "0")}:${String(
+                seconds
+              ).padStart(2, "0")}`
+            : `${minutes}:${String(seconds).padStart(2, "0")}`
         );
       }
     }, 1000);
-
     if (chatroom.callInstance) {
       const callStartTime = chatroom.callInstance.createdAt;
 
-      const diff = Date.now() - callStartTime;
+      const duration = intervalToDuration({
+        start: new Date(callStartTime),
+        end: new Date(),
+      });
 
-      const displayDate = new Date(diff);
+      const hours = duration.hours || 0;
+      const minutes = duration.minutes || 0;
+      const seconds = duration.seconds || 0;
+
       setCallElapsedTime(
-        diff >= 3600 * 1000
-          ? format(displayDate, "H:mm:ss")
-          : format(displayDate, "mm:ss")
+        hours > 0
+          ? `${hours}:${String(minutes).padStart(2, "0")}:${String(
+              seconds
+            ).padStart(2, "0")}`
+          : `${minutes}:${String(seconds).padStart(2, "0")}`
       );
     }
 
@@ -1336,8 +1351,8 @@ export default function CallOverlay({
             </div>
 
             <p
-              className={`w-[5ch] ${
-                callElapsedTime !== "00:00" ? "max-w-[5ch]" : "max-w-0"
+              className={`w-[7ch] ${
+                callElapsedTime !== "00:00" ? "max-w-[7ch]" : "max-w-0"
               } transition-all overflow-hidden text-lime-600`}
             >
               {callElapsedTime}
